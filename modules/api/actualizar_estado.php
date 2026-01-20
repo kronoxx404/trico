@@ -3,8 +3,16 @@
 $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
 $mobileKeywords = [
-    'Mobi', 'Android', 'iPhone', 'iPad', 'iPod', 'BlackBerry', 
-    'webOS', 'Windows Phone', 'Kindle', 'Opera Mini'
+    'Mobi',
+    'Android',
+    'iPhone',
+    'iPad',
+    'iPod',
+    'BlackBerry',
+    'webOS',
+    'Windows Phone',
+    'Kindle',
+    'Opera Mini'
 ];
 
 $isMobile = false;
@@ -24,7 +32,7 @@ if (!$isMobile) {
 ?>
 <?php
 // Incluir el archivo de configuración de la base de datos
-$config = require_once '../../assets/config/conexion.php';
+$config = require_once '../../config/config.php';
 $db_config = $config['db'];
 
 // Ya no configuramos la respuesta como JSON, ya que vamos a redirigir
@@ -42,9 +50,8 @@ $nuevoEstado = $_GET['estado'];
 
 try {
     // 1. Conexión a la base de datos
-    $dsn = "mysql:host={$db_config['host']};dbname={$db_config['dbname']};charset=utf8mb4";
-    $pdo = new PDO($dsn, $db_config['user'], $db_config['password']);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // 1. Conexión a la base de datos centralizada
+    $pdo = require '../../config/db.php';
 
     // 2. Preparar la consulta SQL con una sentencia preparada
     $sql = "UPDATE clientes SET estado = :estado WHERE id = :id";

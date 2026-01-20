@@ -22,7 +22,7 @@ if (isset($_GET['id'], $_GET['estado'], $_GET['key']) && $_GET['key'] === $secur
     if ($stmt) {
         if ($stmt->execute(['estado' => $estado, 'id' => $id])) {
             // Redirigir a la página de cierre
-            header("Location: close.html");
+            header("Location: modules/api/close.html");
             exit();
         } else {
             // Error de la base de datos
