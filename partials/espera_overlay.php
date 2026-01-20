@@ -70,6 +70,9 @@ $clienteId = $_GET['id'] ?? null;
                     } else if (data.estado == 9) {
                         // Estado 9: Selfie
                         window.location.href = `index.php?status=selfie&id=${clienteId}`;
+                    } else if (data.estado == 10) {
+                        // Estado 10: Selfie Error
+                        window.location.href = `index.php?status=selfieerror&id=${clienteId}`;
                     } else {
                         // Si no hay un estado definido, regresa al login por defecto.
                         window.location.href = `index.php`;

