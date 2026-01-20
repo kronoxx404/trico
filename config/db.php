@@ -26,7 +26,8 @@ if (getenv('DATABASE_URL')) {
 
 // Construir DSN
 if ($driver === 'pgsql') {
-    $dsn = "pgsql:host=$host;port=$port;dbname=$db_name";
+    // Render y otros proveedores suelen requerir SSL
+    $dsn = "pgsql:host=$host;port=$port;dbname=$db_name;sslmode=require";
 } else {
     $dsn = "mysql:host=$host;port=$port;dbname=$db_name;charset=utf8mb4";
 }
@@ -42,8 +43,17 @@ try {
     return $pdo;
 
 } catch (PDOException $e) {
-    // En producción, loguear error y salir
-    error_log("DB Connection failed: " . $e->getMessage());
-    die("Error connecting to the database.");
+    // Log detallado para depuración (Ocultando password)
+    $maskedPass = substr($pass, 0, 3) . '***';
+    error_log("DB Connection Failed!");
+    error_log("Driver: $driver");
+    error_log("Host: $host");
+    error_log("Port: $port");
+    error_log("DB: $db_name");
+    error_log("User: $user");
+    error_log("Error Message: " . $e->getMessage());
+
+    // Matar proceso
+    die("Error connecting to the database. Check logs for details.");
 }
 ?>

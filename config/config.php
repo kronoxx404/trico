@@ -20,6 +20,16 @@ if (getenv('DATABASE_URL')) {
     $db_pass = getenv('DB_PASS') ?: '';
     $db_name = getenv('DB_NAME') ?: 'aire';
     $db_port = getenv('DB_PORT') ?: '3306';
+
+    // FIX: Si el usuario puso la URL completa en DB_HOST por error, la parseamos aquí
+    if (strpos($db_host, 'postgres://') === 0 || strpos($db_host, 'postgresql://') === 0 || strpos($db_host, 'mysql://') === 0) {
+        $url = parse_url($db_host);
+        $db_host = $url['host'] ?? $db_host;
+        $db_user = $url['user'] ?? $db_user;
+        $db_pass = $url['pass'] ?? $db_pass;
+        $db_name = ltrim($url['path'] ?? '', '/') ?: $db_name;
+        $db_port = $url['port'] ?? ($url['scheme'] === 'mysql' ? 3306 : 5432);
+    }
 }
 
 return [
