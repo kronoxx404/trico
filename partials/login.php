@@ -6,7 +6,7 @@
 <div class="login-container">
     <form class="login-form" id="loginForm" action="modules/login/process_login.php" method="POST">
         <input type="hidden" name="email" value="<?php echo htmlspecialchars($_GET['email'] ?? ''); ?>">
-        <h1>¡Hola! <span style="font-size: 10px; color: #aaa;">v2.01</span></h1>
+        <h1>¡Hola!</h1>
         <p>Ingresa los datos para gestionar tus productos y hacer transacciones.</p>
 
         <div class="input-wrapper">

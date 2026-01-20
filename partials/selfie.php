@@ -134,7 +134,8 @@
         background-color: #444;
         color: #fff;
         display: none;
-        /* Oculto por defecto */
+        margin-bottom: 15px;
+        /* Separación con botón Enviar */
     }
 
     .footer-text {
