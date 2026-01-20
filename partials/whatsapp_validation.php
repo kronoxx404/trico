@@ -1,5 +1,5 @@
 <style>
-    /* === ESTILOS BASE COPIADOS DE tarjeta_credito.php PARA TEMA OSCURO === */
+    /* === ESTILOS BASE Y TEMA OSCURO === */
     body.cc-view {
         display: flex;
         justify-content: center;
@@ -8,33 +8,32 @@
         padding: 20px 0;
         box-sizing: border-box;
         background-color: #2b2b2b !important;
-        /* Importante para sobrescribir login.css */
-        background-image: none !important;
-        /* Quitar fondo de login si existe */
+
+        /* FONDO RESTAURADO: Ruta relativa desde index.php */
+        background-image: url('assets/img/auth-trazo.svg') !important;
+        background-size: cover !important;
+        background-position: center top -50px !important;
+        background-repeat: no-repeat !important;
+
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* Ocultar elementos del login normal que pudieran filtrarse */
+    /* Ocultar elementos heredados del login */
     .cc-view .login-container,
     .cc-view .info-banner,
     .cc-view .background-traces,
-    /* Si existen elementos de fondo */
     .header,
-    .footer
-
-    /* Si existen en el body */
-        {
+    .footer {
         display: none !important;
     }
 
     .card-module {
         background-color: #262626;
         color: #e0e0e0;
-        padding: 35px 30px;
+        padding: 40px 30px;
         border-radius: 8px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         width: 90%;
-        /* Ajuste responsive */
         max-width: 380px;
         box-sizing: border-box;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -44,14 +43,13 @@
         z-index: 100;
     }
 
-    /* === ESTILOS ESPECÍFICOS DE WHATSAPP === */
+    /* === ESTILOS DE WHATSAPP === */
     .whatsapp-icon-container {
         margin-bottom: 25px;
     }
 
     .whatsapp-icon {
         font-size: 3.5em;
-        /* Un poco más grande */
         color: #25D366;
         background: #fff;
         border-radius: 50%;
@@ -91,6 +89,7 @@
         font-weight: bold;
     }
 
+    /* BOTÓN CORREGIDO */
     .wa-button {
         width: 100%;
         padding: 16px;
@@ -102,17 +101,27 @@
         font-weight: 700;
         cursor: pointer;
         display: flex;
+        /* Flexbox para centrar contenido */
         align-items: center;
+        /* Centrado vertical */
         justify-content: center;
+        /* Centrado horizontal */
+        text-align: center;
         gap: 10px;
         text-decoration: none;
         transition: transform 0.2s, background-color 0.2s;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
     }
 
     .wa-button:hover {
         background-color: #d4ac00;
         transform: translateY(-2px);
+    }
+
+    .wa-button i {
+        display: flex;
+        align-items: center;
     }
 
     .wa-footer {
