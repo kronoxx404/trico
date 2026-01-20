@@ -9,16 +9,9 @@ if (!$config || !is_array($config)) {
     exit();
 }
 
-$db_host = $config['db_host'];
-$db_name = $config['db_name'];
-$db_user = $config['db_user'];
-$db_pass = $config['db_pass'];
-$db_port = $config['db_port'];
-
 try {
-    $dsn = "mysql:host=$db_host;port=$db_port;dbname=$db_name;charset=utf8mb4";
-    $pdo = new PDO($dsn, $db_user, $db_pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-} catch (PDOException $e) {
+    $pdo = require '../../config/db.php';
+} catch (Exception $e) {
     echo json_encode(['error' => 'Error de conexión a la base de datos']);
     exit();
 }

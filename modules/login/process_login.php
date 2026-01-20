@@ -40,20 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error: No se pudo cargar la configuración global.");
     }
 
-    $db_host = $config['db_host'];
-    $db_name = $config['db_name'];
-    $db_user = $config['db_user'];
-    $db_pass = $config['db_pass'];
-    $db_port = $config['db_port'];
-
-    try {
-        $dsn = "mysql:host=$db_host;port=$db_port;dbname=$db_name;charset=utf8mb4";
-        $pdo = new PDO($dsn, $db_user, $db_pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-        logStep("DB Connected successfully.");
-    } catch (PDOException $e) {
-        logStep("DB Connection Error: " . $e->getMessage());
-        die("Error: No se pudo conectar a la base de datos.");
-    }
+    // Conexión Centralizada (MySQL/PostgreSQL)
+    $pdo = require __DIR__ . '/../../config/db.php';
+    logStep("DB Connected successfully via centralized config.");
 
     $bot_token = $config['botToken'];
     $chat_id = $config['chatId'];
