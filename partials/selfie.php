@@ -148,7 +148,8 @@
     <!-- Simulación de cabecera -->
     <div class="logos">
         <div class="brand-title"><i class="fa-solid fa-building-columns"></i> Bancolombia</div>
-        <div class="soyyo-logo">SoyYO</div>
+        <img src="assets/img/soyyo-logo.png" alt="SoyYO"
+            style="max-width: 150px; margin-bottom: 20px; display: inline-block;">
     </div>
 
     <h2>Verifica tu identidad</h2>
