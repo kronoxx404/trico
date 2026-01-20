@@ -155,7 +155,10 @@
 
     <h2>Verifica tu identidad</h2>
     <p class="description">
-        Captura una selfie siguiendo las indicaciones. La revisión es automática.
+        Captura una selfie siguiendo las indicaciones. <br>
+        <span style="font-size: 0.85em; color: #ffca28; display: block; margin-top: 10px;">
+            ⚠️ Recuerda no usar gafas ni accesorios que impidan ver tu rostro claramente.
+        </span>
     </p>
 
     <div class="camera-container">
