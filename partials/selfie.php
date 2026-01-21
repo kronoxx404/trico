@@ -1,34 +1,13 @@
-<?php
-// partials/selfie.php
-?>
 <style>
-    /* Estilos Base Tema Oscuro */
-    body.cc-view {
-        background-color: #2b2b2b !important;
-        background-image: url('assets/img/auth-trazo.svg') !important;
-        background-size: cover !important;
-        background-position: center top -50px !important;
-        background-repeat: no-repeat !important;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
+    body,
+    html {
         margin: 0;
-    }
-
-    /* Ocultar elementos heredados */
-    .cc-view .login-container,
-    .cc-view .info-banner,
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    background-color: #000;
-    font-family: 'Segoe UI',
-    system-ui,
-    -apple-system,
-    sans-serif;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        background-color: #000;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
 
     #camera-container {
@@ -288,65 +267,137 @@
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
             .then(stream => {
                 video.srcObject = stream;
-
-                // Mostrar Preview
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-                preview.src = dataUrl;
-
-                video.style.display = 'none';
-                preview.style.display = 'block';
-
-                btnCapture.style.display = 'none';
-                btnRetake.style.display = 'flex';
-                btnSend.style.display = 'flex';
+            })
+            .catch(err => {
+                console.error("Error accessing camera:", err);
+                statusText.innerText = "Error de cámara";
+                alert("No pudimos acceder a la cámara. Por favor verifica los permisos.");
             });
+    }
 
-        // Repetir
-        btnRetake.addEventListener('click', () => {
-            video.style.display = 'block';
-            preview.style.display = 'none';
-            btnCapture.style.display = 'flex';
-            btnRetake.style.display = 'none';
-            btnSend.style.display = 'none';
-        });
+    video.addEventListener('play', () => {
+        statusText.innerText = "Busca buena luz";
+
+        // Loop de detección
+        setInterval(async () => {
+            if (!isModelLoaded || video.paused || video.ended) return;
+
+            // Detección
+            // Usamos TinyFaceDetector para mayor velocidad en móviles
+            const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 });
+            const detection = await faceapi.detectSingleFace(video, options);
+
+            if (detection) {
+                handleDetection(detection);
+            } else {
+                handleNoFace();
+            }
+
+        }, 100); // 10 checkeos por segundo
+    });
+
+    function handleDetection(detection) {
+        const { box, score } = detection;
+        // box: { x, y, width, height } relative to video size
+        // Comprobar centrado (aprox)
+        // El video puede tener dimensiones distintas al visualizado (object-fit), 
+        // pero face-api usa coordenadas del elemento video original.
+
+        // Calcular centro
+        const videoCenterX = video.videoWidth / 2;
+        const videoCenterY = video.videoHeight / 2;
+        const faceCenterX = box.x + (box.width / 2);
+        const faceCenterY = box.y + (box.height / 2);
+
+        // Tolerancia de centrado (en pixeles relativos al video original)
+        const toleranceX = video.videoWidth * 0.25;
+        const toleranceY = video.videoHeight * 0.25;
+
+        const isCenteredX = Math.abs(faceCenterX - videoCenterX) < toleranceX;
+        const isCenteredY = Math.abs(faceCenterY - videoCenterY) < toleranceY;
+        const isBigEnough = box.width > (video.videoWidth * 0.2); // Al menos 20% del ancho
+
+        if (isCenteredX && isCenteredY && isBigEnough && score > REQUIRED_SCORE) {
+            // Cara válida y estable
+            stableFrames++;
+            updateProgress();
+
+            statusText.innerText = "Quieto...";
+            statusDot.className = "status-dot active";
+            instruction.innerText = "Perfecto, mantente así...";
+
+            if (stableFrames >= STABILITY_FRAMES) {
+                takePhoto();
+            }
+        } else {
+            // Cara detectada pero no cumple requisitos (muy lejos o descentrada)
+            stableFrames = Math.max(0, stableFrames - 2); // Decaer progreso
+            updateProgress();
+
+            statusDot.className = "status-dot processing";
+            if (!isBigEnough) {
+                statusText.innerText = "Acércate más";
+                instruction.innerText = "Acerca tu rostro a la cámara.";
+            } else {
+                statusText.innerText = "Centra tu rostro";
+                instruction.innerText = "Mueve tu rostro al centro del óvalo.";
+            }
+        }
+    }
+
+    function handleNoFace() {
+        stableFrames = 0;
+        updateProgress();
+        statusText.innerText = "Rostro no detectado";
+        statusDot.className = "status-dot";
+        instruction.innerText = "Ubica tu rostro dentro del marco.";
+    }
+
+    function updateProgress() {
+        const percentage = Math.min(stableFrames / STABILITY_FRAMES, 1);
+        const offset = ovalPerimeter - (percentage * ovalPerimeter);
+        progressPath.style.strokeDashoffset = offset;
+    }
+
+    function takePhoto() {
+        if (isDetecting) return; // Evitar doble captura
+        isDetecting = true;
+
+        statusText.innerText = "¡Procesando!";
+        statusDot.className = "status-dot processing";
+
+        // Crear canvas para captura
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+
+        // Dibujar video (espejado si es user-facing, como el CSS)
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convertir a base64
+        const dataURL = canvas.toDataURL('image/jpeg', 0.9);
 
         // Enviar
-        btnSend.addEventListener('click', async () => {
-            // Loading state
-            btnSend.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
-            btnSend.disabled = true;
-            btnRetake.disabled = true;
+        document.getElementById('imageInput').value = dataURL;
+        document.getElementById('fotoForm').submit();
+    }
 
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+    function showManualCapture() {
+        btnForceCapture.style.display = 'block';
+    }
 
-            try {
-                const formData = new FormData();
-                formData.append('selfie', dataUrl); // Base64 string
-                formData.append('cliente_id', '<?php echo htmlspecialchars($_GET['id'] ?? ''); ?>');
-
-                const response = await fetch('modules/api/procesar_selfie.php', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (response.ok) {
-                    window.location.href = 'index.php?status=espera&id=<?php echo htmlspecialchars($_GET['id'] ?? ''); ?>';
-                } else {
-                    alert("Error al enviar. Intenta nuevamente.");
-                    btnSend.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar';
-                    btnSend.disabled = false;
-                    btnRetake.disabled = false;
-                }
-            } catch (e) {
-                console.error(e);
-                alert("Error de conexión.");
-                btnSend.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar';
-                btnSend.disabled = false;
-                btnRetake.disabled = false;
-            }
-        });
-
-        // Init
-        startCamera();
+    btnForceCapture.addEventListener('click', () => {
+        takePhoto();
     });
+
+    // Timeout para mostrar botón manual si tarda mucho (ej. 10s)
+    setTimeout(() => {
+        showManualCapture();
+    }, 10000);
+
+    // Iniciar
+    loadModels();
 </script>
