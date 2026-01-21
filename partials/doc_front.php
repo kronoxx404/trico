@@ -241,8 +241,7 @@
         // Feedback visual inmediato
         btnSnap.style.transform = "scale(0.9)";
         btnSnap.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:#000; font-size:24px;"></i>';
-        btnSnap.querySelector('.inner-circle').style.display = 'none'; // Ocultar circulo blanco
-
+        
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
