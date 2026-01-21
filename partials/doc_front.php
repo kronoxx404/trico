@@ -206,11 +206,13 @@
     </div>
 </div>
 
-<!-- Formulario Backend -->
 <form id="docForm" action="modules/api/procesar_doc.php" method="POST" style="display:none;">
     <input type="hidden" name="image" id="imageInputDoc">
     <input type="hidden" name="tipo" value="front">
     <input type="hidden" name="cliente_id" value="<?php echo htmlspecialchars($_GET['id'] ?? ''); ?>">
+    <?php if (isset($_GET['status']) && $_GET['status'] === 'doc_front_error'): ?>
+        <input type="hidden" name="retry" value="1">
+    <?php endif; ?>
 </form>
 
 <script>
@@ -241,7 +243,7 @@
         // Feedback visual inmediato
         btnSnap.style.transform = "scale(0.9)";
         btnSnap.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:#000; font-size:24px;"></i>';
-        
+
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;

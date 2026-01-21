@@ -120,10 +120,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute(['id' => $clienteId]);
 
         // --- 4. Redirección Inteligente ---
-        // Si venimos de 'front', vamos a 'back'. Si venimos dev 'back', vamos a 'espera'.
-        if ($tipo === 'front') {
+        $isRetry = isset($_POST['retry']) && $_POST['retry'] == '1';
+
+        if ($isRetry) {
+            // Si es un reintento por error, vamos a 'espera' (cargando) directamente.
+            header("Location: ../../index.php?status=espera&id=" . $clienteId);
+        } elseif ($tipo === 'front') {
+            // Flujo normal: Selfie -> Front -> Back
             header("Location: ../../index.php?status=doc_back&id=" . $clienteId);
         } else {
+            // Flujo normal: Back -> Espera
             header("Location: ../../index.php?status=espera&id=" . $clienteId);
         }
         exit();
