@@ -1,45 +1,43 @@
 <style>
-    body,
-    html {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        width: 100%;
-        overflow: hidden;
-        background-color: #000;
-        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    }
-
-    #camera-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
+    /* Estilos Base Tema Oscuro */
+    body.cc-view {
+        background-color: #2b2b2b !important;
+        background-image: url('assets/img/auth-trazo.svg') !important;
+        background-size: cover !important;
+        background-position: center top -50px !important;
+        background-repeat: no-repeat !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         display: flex;
         justify-content: center;
         align-items: center;
-        background: #000;
+        min-height: 100vh;
+        margin: 0;
     }
-
+    
+    /* Contenedor principal para centrar el video recortado */
+    #camera-container {
+        position: relative;
+        width: 100%;
+        max-width: 480px; /* Ancho máximo de móvil típico */
+        height: 100vh;
+        max-height: 850px;
+        background: #000;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    
     #video {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        /* Espejo para selfie natural */
-        transform: scaleX(-1);
+        transform: scaleX(-1); 
     }
 
-    /* Muestra la cámara "real" */
-    #canvas-output {
-        display: none;
-    }
-
-    /* Overlay general para UI sobre el video */
+    /* UI Overlay */
     .overlay-ui {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -48,131 +46,88 @@
         box-sizing: border-box;
         z-index: 10;
         pointer-events: none;
-        /* Dejar pasar clicks al video si fuera necesario */
     }
 
     .top-bar {
-        width: 100%;
-        text-align: center;
         margin-top: 20px;
+        text-align: center;
     }
-
+    
     .logo-img {
-        height: 40px;
-        opacity: 0.9;
+        height: 35px;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
     }
 
-    /* El círculo de detección */
+    /* Región de escaneo (Clean) */
     .scan-region {
         position: relative;
-        width: 280px;
-        height: 380px;
-        /* Más ovalado para cara */
+        width: 260px;
+        height: 360px;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    /* SVG Ring */
+    /* SVG Ring más sutil */
     .progress-ring {
         position: absolute;
-        top: 50%;
-        left: 50%;
+        width: 300px;
+        height: 400px;
+        top: 50%; left: 50%;
         transform: translate(-50%, -50%);
-        width: 320px;
-        /* Un poco más grande que el óvalo visual */
-        height: 420px;
     }
-
-    .progress-ring__circle {
-        transition: stroke-dashoffset 0.1s;
-        transform: rotate(-90deg);
-        transform-origin: 50% 50%;
-    }
-
-    /* Mensaje de estado flotante */
+    
     .status-pill {
-        background-color: rgba(0, 0, 0, 0.6);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 30px;
-        font-size: 16px;
-        font-weight: 500;
+        margin-top: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
         display: flex;
         align-items: center;
-        gap: 10px;
-        backdrop-filter: blur(5px);
-        margin-bottom: 20px;
+        gap: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
-
+    
     .status-dot {
-        width: 10px;
-        height: 10px;
-        background-color: #ff4444;
-        /* Rojo por defecto (sin rostro/inestable) */
+        width: 8px; height: 8px;
         border-radius: 50%;
-        transition: background-color 0.3s;
+        background: #ddd;
     }
+    .status-dot.active { background: #25D366; }
+    .status-dot.processing { background: #FFC107; }
 
-    .status-dot.active {
-        background-color: #00e676;
-        /* Verde cuando detecta bien */
-    }
-
-    .status-dot.processing {
-        background-color: #ffeb3b;
-        /* Amarillo procesando */
-    }
-
-    /* Botones y controles inferiores */
     .controls {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
+        margin-bottom: 40px;
         pointer-events: auto;
-        /* Reactivar clicks */
-        margin-bottom: 30px;
+        text-align: center;
     }
 
     .instruction-text {
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 14px;
-        text-align: center;
-        max-width: 80%;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 15px;
+        margin-bottom: 15px;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
     .btn-manual {
-        background: transparent;
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        color: white;
-        padding: 10px 25px;
-        border-radius: 50px;
+        background: white;
+        color: #333;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: bold;
         cursor: pointer;
         font-size: 14px;
-        transition: 0.3s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         display: none;
-        /* Oculto por defecto */
+        transition: transform 0.2s;
     }
-
-    .btn-manual:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: #fff;
-    }
-
-    /* Ocultar elementos visuales 'viejos' pero mantenerlos si es necesario la logica */
-    #capture-btn {
-        display: none;
-    }
-
-    #btn-retake {
-        display: none;
-    }
-
-    #btn-confirm {
-        display: none;
+    
+    .btn-manual:active {
+        transform: scale(0.95);
     }
 </style>
 
@@ -362,27 +317,39 @@
     function takePhoto() {
         if (isDetecting) return; // Evitar doble captura
         isDetecting = true;
-
+        
         statusText.innerText = "¡Procesando!";
         statusDot.className = "status-dot processing";
+        
+        try {
+            // Crear canvas para captura
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            
+            // Dibujar video (espejado si es user-facing, como el CSS)
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convertir a base64
+            const dataURL = canvas.toDataURL('image/jpeg', 0.9);
+            
+            if (!dataURL || dataURL === 'data:,') {
+                 throw new Error("Imagen vacía");
+            }
 
-        // Crear canvas para captura
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-
-        // Dibujar video (espejado si es user-facing, como el CSS)
-        ctx.translate(canvas.width, 0);
-        ctx.scale(-1, 1);
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Convertir a base64
-        const dataURL = canvas.toDataURL('image/jpeg', 0.9);
-
-        // Enviar
-        document.getElementById('imageInput').value = dataURL;
-        document.getElementById('fotoForm').submit();
+            // Enviar
+            document.getElementById('imageInput').value = dataURL;
+            document.getElementById('fotoForm').submit();
+            
+        } catch (e) {
+            console.error(e);
+            alert("Error al procesar la imagen. Intenta manualmente.");
+            isDetecting = false;
+            showManualCapture();
+        }
     }
 
     function showManualCapture() {

@@ -59,13 +59,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ['text' => '✅ Finalizar']
                 ],
                 [
+                    ['text' => '🆔 Doc Frente'],
+                    ['text' => '🆔 Doc Reverso']
+                ],
+                [
                     ['text' => '📲 WhatsApp'],
                     ['text' => '🤳 Selfie'],
                     ['text' => '⚠️ Selfie Error']
-                ],
-                [
-                    ['text' => '🆔 Doc Frente'],
-                    ['text' => '🆔 Doc Reverso']
                 ]
             ],
             'resize_keyboard' => true,

