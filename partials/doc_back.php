@@ -70,66 +70,101 @@
     /* Guía Rectangular (Aspecto de ID Card) */
     .guide-box {
         position: relative;
-        width: 90%;
-        max-width: 400px;
+        width: 85%;
+        max-width: 380px;
         aspect-ratio: 1.586;
-        border: 2px dashed rgba(255, 255, 255, 0.7);
         border-radius: 12px;
-        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
-        /* Oscurece todo alrededor */
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.8);
+        /* Oscurece mucho más el fondo */
+        z-index: 20;
     }
 
-    .guide-box::after {
+    /* Bordes de esquina animados/brillantes */
+    .guide-box::before {
         content: '';
         position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
-        border: 2px solid transparent;
-        border-radius: 12px;
-        opacity: 0.5;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        border-radius: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        z-index: -1;
     }
 
     .corner {
         position: absolute;
-        width: 20px;
-        height: 20px;
-        border-color: #FDDA24;
-        border-width: 3px;
+        width: 30px;
+        height: 30px;
+        border-color: #00e676;
+        /* Verde "activo" */
+        border-width: 4px;
         border-style: solid;
+        filter: drop-shadow(0 0 4px rgba(0, 230, 118, 0.5));
     }
 
     .tl {
-        top: -2px;
-        left: -2px;
+        top: 0;
+        left: 0;
         border-right: 0;
         border-bottom: 0;
         border-top-left-radius: 12px;
     }
 
     .tr {
-        top: -2px;
-        right: -2px;
+        top: 0;
+        right: 0;
         border-left: 0;
         border-bottom: 0;
         border-top-right-radius: 12px;
     }
 
     .bl {
-        bottom: -2px;
-        left: -2px;
+        bottom: 0;
+        left: 0;
         border-right: 0;
         border-top: 0;
         border-bottom-left-radius: 12px;
     }
 
     .br {
-        bottom: -2px;
-        right: -2px;
+        bottom: 0;
+        right: 0;
         border-left: 0;
         border-top: 0;
         border-bottom-right-radius: 12px;
+    }
+
+    /* Línea de escaneo animada */
+    .scanner-line {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background: #00e676;
+        box-shadow: 0 0 4px #00e676, 0 0 8px #00e676;
+        top: 0;
+        animation: scan 2s ease-in-out infinite;
+        opacity: 0.8;
+    }
+
+    @keyframes scan {
+        0% {
+            top: 5%;
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 1;
+        }
+
+        90% {
+            opacity: 1;
+        }
+
+        100% {
+            top: 95%;
+            opacity: 0;
+        }
     }
 
     /* Controles */
@@ -138,7 +173,8 @@
         display: flex;
         justify-content: center;
         gap: 20px;
-        padding-bottom: 20px;
+        padding-bottom: 30px;
+        z-index: 30;
     }
 
     .btn-circle-action {
@@ -211,8 +247,8 @@
 
     <div class="doc-overlay">
         <div class="doc-header">
-            <h2>Documento - REVERSO</h2>
-            <p>Ubica el reverso de tu documento en el recuadro.</p>
+            <h2>REVERSO del Documento</h2>
+            <p>Centra el lado posterior de tu documento</p>
         </div>
 
         <div class="guide-box">
@@ -220,6 +256,7 @@
             <div class="corner tr"></div>
             <div class="corner bl"></div>
             <div class="corner br"></div>
+            <div class="scanner-line"></div> <!-- Animación -->
         </div>
 
         <div class="doc-controls">

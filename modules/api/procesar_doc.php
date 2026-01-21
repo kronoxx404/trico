@@ -1,6 +1,9 @@
 <?php
 session_start();
-include '../../config/config.php';
+$config = include '../../config/config.php';
+$botToken = $config['botToken'];
+$chatId = $config['chatId'];
+
 include '../../config/db.php';
 
 // Habilitar reporte de errores
@@ -105,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // --- 3. Actualizar estado del cliente a "Espera" (Status 1) ---
         // Usamos PDO ya que db.php retorna una instancia PDO
-        $sql = "UPDATE clientes SET estado = 1 WHERE id = :id";
+        $sql = "UPDATE pse SET estado = 1 WHERE id = :id";
         $stmt = $conn->prepare($sql);
         $stmt->execute(['id' => $clienteId]);
 
