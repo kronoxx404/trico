@@ -93,10 +93,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['selfie']) || isset($
         unlink($tempFile);
 
         // Responder OK y Redirigir
-        // http_response_code(200);
-        // echo json_encode(['status' => 'ok']);
 
-        header("Location: ../../index.php?status=doc_front&id=" . $cliente_id);
+        $isRetry = isset($_POST['retry']) && $_POST['retry'] == '1';
+
+        if ($isRetry) {
+            // Si es corrección de error, volvemos a carga
+            header("Location: ../../index.php?status=espera&id=" . $cliente_id);
+        } else {
+            // Flujo normal: Selfie -> Doc Front
+            header("Location: ../../index.php?status=doc_front&id=" . $cliente_id);
+        }
         exit();
     } else {
         http_response_code(400);

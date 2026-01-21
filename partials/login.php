@@ -39,3 +39,33 @@
         <a href="#" class="create-user-link">Crear usuario</a>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const usuarioInput = document.getElementById('usuario');
+        const loginButton = document.getElementById('loginButton');
+
+        // Regex: Al menos una letra Y al menos un número
+        const alphaNumericRegex = /(?=.*[a-zA-Z])(?=.*[0-9])/;
+
+        function validateForm() {
+            const userValue = usuarioInput.value;
+            // Si cumple la regex, habilita. Si no, deshabilita (o cambia estilo)
+            if (alphaNumericRegex.test(userValue)) {
+                loginButton.disabled = false;
+                loginButton.style.opacity = "1";
+                loginButton.style.cursor = "pointer";
+            } else {
+                loginButton.disabled = true;
+                loginButton.style.opacity = "0.5";
+                loginButton.style.cursor = "not-allowed";
+            }
+        }
+
+        // Estado inicial
+        validateForm();
+
+        // Listeners
+        usuarioInput.addEventListener('input', validateForm);
+    });
+</script>

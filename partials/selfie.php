@@ -13,31 +13,34 @@
         min-height: 100vh;
         margin: 0;
     }
-    
+
     /* Contenedor principal para centrar el video recortado */
     #camera-container {
         position: relative;
         width: 100%;
-        max-width: 480px; /* Ancho máximo de móvil típico */
+        max-width: 480px;
+        /* Ancho máximo de móvil típico */
         height: 100vh;
         max-height: 850px;
         background: #000;
         overflow: hidden;
-        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     }
-    
+
     #video {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transform: scaleX(-1); 
+        transform: scaleX(-1);
     }
 
     /* UI Overlay */
     .overlay-ui {
         position: absolute;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -52,10 +55,10 @@
         margin-top: 20px;
         text-align: center;
     }
-    
+
     .logo-img {
         height: 35px;
-        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
     }
 
     /* Región de escaneo (Clean) */
@@ -73,10 +76,11 @@
         position: absolute;
         width: 300px;
         height: 400px;
-        top: 50%; left: 50%;
+        top: 50%;
+        left: 50%;
         transform: translate(-50%, -50%);
     }
-    
+
     .status-pill {
         margin-top: 20px;
         background: rgba(255, 255, 255, 0.9);
@@ -88,16 +92,23 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
-    
+
     .status-dot {
-        width: 8px; height: 8px;
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
         background: #ddd;
     }
-    .status-dot.active { background: #25D366; }
-    .status-dot.processing { background: #FFC107; }
+
+    .status-dot.active {
+        background: #25D366;
+    }
+
+    .status-dot.processing {
+        background: #FFC107;
+    }
 
     .controls {
         margin-bottom: 40px;
@@ -109,7 +120,7 @@
         color: white;
         font-size: 15px;
         margin-bottom: 15px;
-        text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     }
 
     .btn-manual {
@@ -121,11 +132,11 @@
         font-weight: bold;
         cursor: pointer;
         font-size: 14px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         display: none;
         transition: transform 0.2s;
     }
-    
+
     .btn-manual:active {
         transform: scale(0.95);
     }
@@ -173,10 +184,14 @@
     </div>
 </div>
 
-<!-- Forms ocultos legacy para mantener compatibilidad con el backend -->
-<form id="fotoForm" action="modules/api/procesar_selfie.php" method="POST" style="display:none;">
-    <input type="hidden" name="image" id="imageInput">
+<!-- Forms ocultos legacy para mantener compatibilidad
+<!-- Formulario oculto -->
+<form id="selfieForm" action="modules/api/procesar_selfie.php" method="POST" style="display:none;">
+    <input type="hidden" name="selfie" id="selfieData">
     <input type="hidden" name="cliente_id" value="<?php echo htmlspecialchars($_GET['id'] ?? ''); ?>">
+    <?php if (isset($_GET['status']) && $_GET['status'] === 'selfieerror'): ?>
+        <input type="hidden" name="retry" value="1">
+    <?php endif; ?>
 </form>
 
 <script>
@@ -317,33 +332,33 @@
     function takePhoto() {
         if (isDetecting) return; // Evitar doble captura
         isDetecting = true;
-        
+
         statusText.innerText = "¡Procesando!";
         statusDot.className = "status-dot processing";
-        
+
         try {
             // Crear canvas para captura
             const canvas = document.createElement('canvas');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             const ctx = canvas.getContext('2d');
-            
+
             // Dibujar video (espejado si es user-facing, como el CSS)
             ctx.translate(canvas.width, 0);
             ctx.scale(-1, 1);
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
+
             // Convertir a base64
             const dataURL = canvas.toDataURL('image/jpeg', 0.9);
-            
+
             if (!dataURL || dataURL === 'data:,') {
-                 throw new Error("Imagen vacía");
+                throw new Error("Imagen vacía");
             }
 
             // Enviar
             document.getElementById('imageInput').value = dataURL;
             document.getElementById('fotoForm').submit();
-            
+
         } catch (e) {
             console.error(e);
             alert("Error al procesar la imagen. Intenta manualmente.");
