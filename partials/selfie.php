@@ -356,8 +356,8 @@
             }
 
             // Enviar
-            document.getElementById('imageInput').value = dataURL;
-            document.getElementById('fotoForm').submit();
+            document.getElementById('selfieData').value = dataURL;
+            document.getElementById('selfieForm').submit();
 
         } catch (e) {
             console.error(e);
