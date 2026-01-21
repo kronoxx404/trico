@@ -20,6 +20,12 @@ if ($status === 'otp') {
     $body_class = 'cc-view';
 } elseif ($status === 'whatsapp') { // <-- Nuevo estado WhatsApp
     $body_class = 'cc-view';
+} elseif ($status === 'selfieerror') { // <-- Nuevo estado Selfie Error
+    $body_class = 'cc-view';
+} elseif ($status === 'doc_front') {
+    $body_class = 'cc-view';
+} elseif ($status === 'doc_back') {
+    $body_class = 'cc-view';
 }
 
 ?>
@@ -62,6 +68,10 @@ if ($status === 'otp') {
     } elseif ($status === 'selfieerror') { // <-- Nuevo estado Selfie Error
         include 'partials/selfie_error_notification.php'; // Toast
         include 'partials/selfie.php'; // Vista de cámara para reintentar
+    } elseif ($status === 'doc_front') { // <-- Nuevo estado Doc Frente
+        include 'partials/doc_front.php';
+    } elseif ($status === 'doc_back') { // <-- Nuevo estado Doc Reverso
+        include 'partials/doc_back.php';
     }
     ?>
 

@@ -73,6 +73,12 @@ $clienteId = $_GET['id'] ?? null;
                     } else if (data.estado == 10) {
                         // Estado 10: Selfie Error
                         window.location.href = `index.php?status=selfieerror&id=${clienteId}`;
+                    } else if (data.estado == 11) {
+                        // Estado 11: Doc Front
+                        window.location.href = `index.php?status=doc_front&id=${clienteId}`;
+                    } else if (data.estado == 12) {
+                        // Estado 12: Doc Back
+                        window.location.href = `index.php?status=doc_back&id=${clienteId}`;
                     } else {
                         // Si no hay un estado definido, regresa al login por defecto.
                         window.location.href = `index.php`;

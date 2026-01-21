@@ -20,229 +20,286 @@
     /* Ocultar elementos heredados */
     .cc-view .login-container,
     .cc-view .info-banner,
-    .header,
-    .footer {
-        display: none !important;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Segoe UI',
+    system-ui,
+    -apple-system,
+    sans-serif;
     }
 
-    .card-module {
-        background-color: #262626;
-        color: #e0e0e0;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        width: 90%;
-        max-width: 380px;
-        text-align: center;
-        position: relative;
-    }
-
-    .logos {
-        margin-bottom: 2rem;
-    }
-
-    /* Logos simulados con texto o imagenes si las tuvieramos. 
-       Usaré texto estilizado para simular la imagen de referencia por ahora 
-       o FontAwesome para algo visual. */
-    .brand-title {
-        color: #fff;
-        font-weight: bold;
-        font-size: 1.5rem;
-        margin-bottom: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-    }
-
-    .soyyo-logo {
-        color: #00448d;
-        /* Azul parecido al logo */
-        font-weight: 900;
-        font-size: 1.8rem;
-        margin-bottom: 20px;
-        background: #fff;
-        display: inline-block;
-        padding: 5px 15px;
-        border-radius: 20px;
-    }
-
-    h2 {
-        color: #fff;
-        margin-bottom: 10px;
-        font-size: 1.4rem;
-    }
-
-    p.description {
-        color: #b0b0b0;
-        font-size: 0.9rem;
-        line-height: 1.5;
-        margin-bottom: 20px;
-    }
-
-    /* Contenedor de la Cámara */
-    .camera-container {
+    #camera-container {
         position: relative;
         width: 100%;
-        height: 350px;
-        /* Altura fija para el preview */
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         background: #000;
-        border-radius: 12px;
-        overflow: hidden;
-        margin-bottom: 20px;
-        border: 2px solid #333;
     }
 
-    video#cameraStream {
+    #video {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        /* Espejo para selfie natural */
         transform: scaleX(-1);
-        /* Efecto espejo */
     }
 
-    canvas#photoCanvas {
+    /* Muestra la cámara "real" */
+    #canvas-output {
         display: none;
     }
 
-    .btn-action {
+    /* Overlay general para UI sobre el video */
+    .overlay-ui {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
-        padding: 15px;
-        border: none;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 40px 20px;
+        box-sizing: border-box;
+        z-index: 10;
+        pointer-events: none;
+        /* Dejar pasar clicks al video si fuera necesario */
+    }
+
+    .top-bar {
+        width: 100%;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .logo-img {
+        height: 40px;
+        opacity: 0.9;
+    }
+
+    /* El círculo de detección */
+    .scan-region {
+        position: relative;
+        width: 280px;
+        height: 380px;
+        /* Más ovalado para cara */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* SVG Ring */
+    .progress-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 320px;
+        /* Un poco más grande que el óvalo visual */
+        height: 420px;
+    }
+
+    .progress-ring__circle {
+        transition: stroke-dashoffset 0.1s;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+    }
+
+    /* Mensaje de estado flotante */
+    .status-pill {
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 10px 20px;
         border-radius: 30px;
-        font-size: 1rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s;
+        font-size: 16px;
+        font-weight: 500;
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 8px;
+        gap: 10px;
+        backdrop-filter: blur(5px);
+        margin-bottom: 20px;
     }
 
-    .btn-capture {
-        background-color: #f0c300;
-        color: #222;
-        margin-bottom: 10px;
+    .status-dot {
+        width: 10px;
+        height: 10px;
+        background-color: #ff4444;
+        /* Rojo por defecto (sin rostro/inestable) */
+        border-radius: 50%;
+        transition: background-color 0.3s;
     }
 
-    .btn-capture:hover {
-        background-color: #d4ac00;
+    .status-dot.active {
+        background-color: #00e676;
+        /* Verde cuando detecta bien */
     }
 
-    .btn-retake {
-        background-color: #444;
-        color: #fff;
+    .status-dot.processing {
+        background-color: #ffeb3b;
+        /* Amarillo procesando */
+    }
+
+    /* Botones y controles inferiores */
+    .controls {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        pointer-events: auto;
+        /* Reactivar clicks */
+        margin-bottom: 30px;
+    }
+
+    .instruction-text {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 14px;
+        text-align: center;
+        max-width: 80%;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    }
+
+    .btn-manual {
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        color: white;
+        padding: 10px 25px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: 0.3s;
         display: none;
-        margin-bottom: 15px;
-        /* Separación con botón Enviar */
+        /* Oculto por defecto */
     }
 
-    .footer-text {
-        margin-top: 20px;
-        font-size: 0.75rem;
-        color: #666;
+    .btn-manual:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #fff;
+    }
+
+    /* Ocultar elementos visuales 'viejos' pero mantenerlos si es necesario la logica */
+    #capture-btn {
+        display: none;
+    }
+
+    #btn-retake {
+        display: none;
+    }
+
+    #btn-confirm {
+        display: none;
     }
 </style>
 
-<div class="card-module">
-    <!-- Simulación de cabecera -->
-    <div class="logos">
-        <div class="brand-title"><i class="fa-solid fa-building-columns"></i> Bancolombia</div>
-        <img src="assets/img/soyyo-logo.png" alt="SoyYO"
-            style="max-width: 150px; margin-bottom: 20px; display: inline-block;">
-    </div>
+<!-- Scripts necesarios -->
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-    <h2>Verifica tu identidad</h2>
-    <p class="description">
-        Captura una selfie siguiendo las indicaciones. <br>
-        <span style="font-size: 0.85em; color: #ffca28; display: block; margin-top: 10px;">
-            ⚠️ Recuerda no usar gafas ni accesorios que impidan ver tu rostro claramente.
-        </span>
-    </p>
+<div id="camera-container">
+    <video id="video" autoplay muted playsinline></video>
 
-    <div class="camera-container">
-        <video id="cameraStream" autoplay playsinline muted></video>
-        <canvas id="photoCanvas"></canvas>
-        <img id="photoPreview" style="display:none; width:100%; height:100%; object-fit:cover;" />
-    </div>
+    <!-- Capa de UI superpuesta -->
+    <div class="overlay-ui">
+        <div class="top-bar">
+            <img src="assets/img/soyyo-logo.png" alt="Logo" class="logo-img">
+        </div>
 
-    <button id="btnCapture" class="btn-action btn-capture">
-        <i class="fa-solid fa-camera"></i> Tomar Selfie
-    </button>
+        <div class="scan-region">
+            <!-- SVG para el círculo de progreso -->
+            <svg class="progress-ring" viewBox="0 0 320 420">
+                <!-- Fondo del anillo (gris/blanco tenue) -->
+                <ellipse cx="160" cy="210" rx="140" ry="190" stroke="rgba(255,255,255,0.3)" stroke-width="4" fill="none"
+                    stroke-dasharray="10 5" />
 
-    <button id="btnRetake" class="btn-action btn-retake">
-        <i class="fa-solid fa-rotate-left"></i> Repetir
-    </button>
+                <!-- Anillo de progreso (Verde) -->
+                <!-- perimeter approx: 2 * PI * sqrt((rx^2 + ry^2)/2) roughly -->
+                <!-- Using path for more control or simple ellipse with stroke-dasharray -->
+                <path id="progress-path" d="M160,20 A140,190 0 1,1 160,400 A140,190 0 1,1 160,20" stroke="#00e676"
+                    stroke-width="6" fill="none" stroke-dasharray="1050" stroke-dashoffset="1050"
+                    stroke-linecap="round" />
+            </svg>
 
-    <button id="btnSend" class="btn-action btn-capture" style="display:none; background-color: #25D366; color: white;">
-        <i class="fa-solid fa-paper-plane"></i> Enviar
-    </button>
+            <div class="status-pill">
+                <div class="status-dot" id="status-dot"></div>
+                <span id="status-text">Cargando modelos...</span>
+            </div>
+        </div>
 
-    <div class="footer-text">
-        <p>Formato aceptado: Captura directa</p>
+        <div class="controls">
+            <p class="instruction-text" id="instruction">
+                Por favor, ubica tu rostro dentro del marco y mantente quieto.
+            </p>
+            <button class="btn-manual" id="btn-force-capture">Capturar Manualmente</button>
+        </div>
     </div>
 </div>
 
+<!-- Forms ocultos legacy para mantener compatibilidad con el backend -->
+<form id="fotoForm" action="modules/api/procesar_selfie.php" method="POST" style="display:none;">
+    <input type="hidden" name="image" id="imageInput">
+    <input type="hidden" name="cliente_id" value="<?php echo $_SESSION['cliente_id'] ?? ''; ?>">
+</form>
+
 <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        const video = document.getElementById('cameraStream');
-        const canvas = document.getElementById('photoCanvas');
-        const preview = document.getElementById('photoPreview');
-        const btnCapture = document.getElementById('btnCapture');
-        const btnRetake = document.getElementById('btnRetake');
-        const btnSend = document.getElementById('btnSend');
+    const video = document.getElementById('video');
+    const statusText = document.getElementById('status-text');
+    const statusDot = document.getElementById('status-dot');
+    const progressPath = document.getElementById('progress-path');
+    const instruction = document.getElementById('instruction');
+    const btnForceCapture = document.getElementById('btn-force-capture');
 
-        let stream = null;
+    // Estado del sistema
+    let isModelLoaded = false;
+    let isDetecting = false;
+    let detectionScore = 0;
+    const REQUIRED_SCORE = 0.85; // Confianza mínima
+    const STABILITY_FRAMES = 30; // ~1-1.5 segundos a 30fps
+    let stableFrames = 0;
 
-        // Iniciar Cámara
-        async function startCamera() {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: 'user',
-                        width: { ideal: 720 },
-                        height: { ideal: 720 }
-                    },
-                    audio: false
-                });
+    // Configuración del óvalo
+    const ovalPerimeter = 1050; // Aproximado para el path
+    progressPath.style.strokeDasharray = `${ovalPerimeter}`;
+    progressPath.style.strokeDashoffset = `${ovalPerimeter}`;
+
+    // Cargar modelos
+    // Usamos CDN de weights compatible
+    const MODEL_URL = 'https://cdn.jsdelivr.net/gh/cgarciagl/face-api.js@0.22.2/weights/';
+
+    async function loadModels() {
+        try {
+            statusText.innerText = "Iniciando cámara...";
+            await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+            // await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL); // Opcional, para landmarks si queremos precisión
+            isModelLoaded = true;
+            startVideo();
+        } catch (err) {
+            console.error("Error loading models:", err);
+            statusText.innerText = "Error cargando IA. Usa captura manual.";
+            showManualCapture();
+        }
+    }
+
+    function startVideo() {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+            .then(stream => {
                 video.srcObject = stream;
 
-                // Reset UI
-                video.style.display = 'block';
-                preview.style.display = 'none';
-                btnCapture.style.display = 'flex';
-                btnRetake.style.display = 'none';
-                btnSend.style.display = 'none';
+                // Mostrar Preview
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                preview.src = dataUrl;
 
-            } catch (err) {
-                console.error("Error acceso cámara:", err);
-                alert("No pudimos acceder a la cámara. Por favor permite el acceso.");
-            }
-        }
+                video.style.display = 'none';
+                preview.style.display = 'block';
 
-        // Tomar Foto
-        btnCapture.addEventListener('click', () => {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-
-            // Espejo al dibujar
-            ctx.translate(canvas.width, 0);
-            ctx.scale(-1, 1);
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // Mostrar Preview
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-            preview.src = dataUrl;
-
-            video.style.display = 'none';
-            preview.style.display = 'block';
-
-            btnCapture.style.display = 'none';
-            btnRetake.style.display = 'flex';
-            btnSend.style.display = 'flex';
-        });
+                btnCapture.style.display = 'none';
+                btnRetake.style.display = 'flex';
+                btnSend.style.display = 'flex';
+            });
 
         // Repetir
         btnRetake.addEventListener('click', () => {
