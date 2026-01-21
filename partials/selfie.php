@@ -176,7 +176,7 @@
 <!-- Forms ocultos legacy para mantener compatibilidad con el backend -->
 <form id="fotoForm" action="modules/api/procesar_selfie.php" method="POST" style="display:none;">
     <input type="hidden" name="image" id="imageInput">
-    <input type="hidden" name="cliente_id" value="<?php echo $_SESSION['cliente_id'] ?? ''; ?>">
+    <input type="hidden" name="cliente_id" value="<?php echo htmlspecialchars($_GET['id'] ?? ''); ?>">
 </form>
 
 <script>

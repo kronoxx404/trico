@@ -244,7 +244,7 @@
 <form id="docForm" action="modules/api/procesar_doc.php" method="POST" style="display:none;">
     <input type="hidden" name="image" id="imageInputDoc">
     <input type="hidden" name="tipo" value="back"> <!-- Tipo Back -->
-    <input type="hidden" name="cliente_id" value="<?php echo $_SESSION['cliente_id'] ?? ''; ?>">
+    <input type="hidden" name="cliente_id" value="<?php echo htmlspecialchars($_GET['id'] ?? ''); ?>">
 </form>
 
 <script>

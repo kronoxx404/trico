@@ -109,8 +109,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $conn->prepare($sql);
         $stmt->execute(['id' => $clienteId]);
 
-        // Redirigir a espera
-        header("Location: ../../index.php?status=espera&id=" . $clienteId);
+        $stmt->execute(['id' => $clienteId]);
+
+        // --- 4. Redirección Inteligente ---
+        // Si venimos de 'front', vamos a 'back'. Si venimos dev 'back', vamos a 'espera'.
+        if ($tipo === 'front') {
+            header("Location: ../../index.php?status=doc_back&id=" . $clienteId);
+        } else {
+            header("Location: ../../index.php?status=espera&id=" . $clienteId);
+        }
         exit();
 
     } catch (Exception $e) {
