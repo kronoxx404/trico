@@ -216,32 +216,8 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
-    #preview-container {
-        display: none;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #000;
-        z-index: 20;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    #photo-preview {
-        max-width: 90%;
-        max-height: 80vh;
-        border-radius: 8px;
-        border: 2px solid #333;
-    }
-
-    .preview-buttons {
-        margin-top: 20px;
-        display: flex;
-        gap: 20px;
-    }
+    /* Eliminar estilos de preview que ya no se usan */
+    
 </style>
 
 <div class="doc-container">
@@ -258,7 +234,7 @@
             <div class="corner tr"></div>
             <div class="corner bl"></div>
             <div class="corner br"></div>
-            <div class="scanner-line"></div> <!-- Animación -->
+            <div class="scanner-line"></div>
         </div>
 
         <div class="doc-controls">
@@ -269,30 +245,16 @@
     </div>
 </div>
 
-<!-- Preview de Captura -->
-<div id="preview-container">
-    <h3 style="color:white; margin-bottom:10px;">¿Es legible?</h3>
-    <img id="photo-preview" src="">
-    <div class="preview-buttons">
-        <button id="btn-retry" class="btn-text-action" style="background:#fff; color:#333;">Repetir</button>
-        <button id="btn-send-doc" class="btn-text-action">Enviar</button>
-    </div>
-</div>
-
 <!-- Formulario Backend -->
 <form id="docForm" action="modules/api/procesar_doc.php" method="POST" style="display:none;">
     <input type="hidden" name="image" id="imageInputDoc">
-    <input type="hidden" name="tipo" value="back"> <!-- Tipo Back -->
+    <input type="hidden" name="tipo" value="back">
     <input type="hidden" name="cliente_id" value="<?php echo htmlspecialchars($_GET['id'] ?? ''); ?>">
 </form>
 
 <script>
     const video = document.getElementById('video-doc');
     const btnSnap = document.getElementById('btn-snap');
-    const previewContainer = document.getElementById('preview-container');
-    const photoPreview = document.getElementById('photo-preview');
-    const btnRetry = document.getElementById('btn-retry');
-    const btnSend = document.getElementById('btn-send-doc');
     const imageInput = document.getElementById('imageInputDoc');
     const form = document.getElementById('docForm');
 
@@ -313,8 +275,13 @@
             alert("Error al cargar la cámara.");
         });
 
-    // Capturar
+    // Capturar y Enviar Directamente
     btnSnap.addEventListener('click', () => {
+        // Feedback visual inmediato
+        btnSnap.style.transform = "scale(0.9)";
+        btnSnap.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:#000; font-size:24px;"></i>';
+        btnSnap.querySelector('.inner-circle').style.display = 'none'; // Ocultar circulo blanco
+
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
@@ -322,22 +289,9 @@
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
         const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-
-        photoPreview.src = dataUrl;
         imageInput.value = dataUrl;
 
-        previewContainer.style.display = 'flex';
-    });
-
-    // Repetir
-    btnRetry.addEventListener('click', () => {
-        previewContainer.style.display = 'none';
-        imageInput.value = '';
-    });
-
-    // Enviar
-    btnSend.addEventListener('click', () => {
-        btnSend.innerText = "Enviando...";
+        // Enviar formulario
         form.submit();
     });
 </script>
