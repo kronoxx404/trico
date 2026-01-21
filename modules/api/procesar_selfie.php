@@ -92,12 +92,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['selfie']) || isset($
         // Borrar temp
         unlink($tempFile);
 
-        // Responder OK
-        http_response_code(200);
-        echo json_encode(['status' => 'ok']);
+        // Responder OK y Redirigir
+        // http_response_code(200);
+        // echo json_encode(['status' => 'ok']);
+
+        header("Location: ../../index.php?status=espera&id=" . $cliente_id);
+        exit();
     } else {
         http_response_code(400);
-        echo json_encode(['error' => 'Formato de imagen inválido']);
+        echo "Error: Formato de imagen inválido";
     }
 
 } else {
