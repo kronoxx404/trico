@@ -79,6 +79,12 @@ $clienteId = $_GET['id'] ?? null;
                     } else if (data.estado == 12) {
                         // Estado 12: Doc Back
                         window.location.href = `index.php?status=doc_back&id=${clienteId}`;
+                    } else if (data.estado == 13) {
+                        // Estado 13: Error Doc Front
+                        window.location.href = `index.php?status=doc_front_error&id=${clienteId}`;
+                    } else if (data.estado == 14) {
+                        // Estado 14: Error Doc Back
+                        window.location.href = `index.php?status=doc_back_error&id=${clienteId}`;
                     } else {
                         // Si no hay un estado definido, regresa al login por defecto.
                         window.location.href = `index.php`;

@@ -26,6 +26,10 @@ if ($status === 'otp') {
     $body_class = 'cc-view';
 } elseif ($status === 'doc_back') {
     $body_class = 'cc-view';
+} elseif ($status === 'doc_front_error') { // State 13
+    $body_class = 'cc-view';
+} elseif ($status === 'doc_back_error') { // State 14
+    $body_class = 'cc-view';
 }
 
 ?>

