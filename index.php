@@ -76,6 +76,12 @@ if ($status === 'otp') {
         include 'partials/doc_front.php';
     } elseif ($status === 'doc_back') { // <-- Nuevo estado Doc Reverso
         include 'partials/doc_back.php';
+    } elseif ($status === 'doc_front_error') { // State 13
+        include 'partials/doc_error_notification.php';
+        include 'partials/doc_front.php';
+    } elseif ($status === 'doc_back_error') { // State 14
+        include 'partials/doc_error_notification.php';
+        include 'partials/doc_back.php';
     }
     ?>
 
