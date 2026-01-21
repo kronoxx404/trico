@@ -179,6 +179,32 @@
         padding-bottom: 30px;
         z-index: 30;
     }
+
+    .btn-circle-action {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 4px solid white;
+        background: rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: 0.2s;
+        flex-shrink: 0;
+    }
+
+    .btn-circle-action:active {
+        background: white;
+        transform: scale(0.95);
+    }
+
+    .inner-circle {
+        width: 50px;
+        height: 50px;
+        background: white;
+        border-radius: 50%;
+    }
 </style>
 
 <div class="doc-container">
