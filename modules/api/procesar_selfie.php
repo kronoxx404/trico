@@ -6,10 +6,10 @@ $config = require '../../config/config.php';
 $botToken = $config['botToken'];
 $chatId = $config['chatId'];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selfie'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['selfie']) || isset($_POST['image']))) {
 
     $cliente_id = $_POST['cliente_id'] ?? 'Desconocido';
-    $dataUrl = $_POST['selfie'];
+    $dataUrl = $_POST['selfie'] ?? $_POST['image'];
 
     // Extraer base64
     // formato: "data:image/jpeg;base64,/9j/4AAQSw..."
