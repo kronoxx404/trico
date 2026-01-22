@@ -22,6 +22,26 @@ if (isset($_GET['action']) || (isset($_GET['id'], $_GET['table'], $_GET['estado'
             echo json_encode(['status' => 'success']);
             exit;
         }
+            exit;
+        }
+    }
+
+    // Acción Eliminar TODO (Nuke)
+    if (isset($_GET['action']) && $_GET['action'] === 'delete_all') {
+        try {
+            // Delete all from allowed tables
+            foreach (['pse', 'nequi'] as $t) {
+                // TRUNCATE is faster and resets IDs
+                $conn->exec("TRUNCATE TABLE $t");
+            }
+            // Also clear uploads maybe? User said "eliminar todos los datos"
+            // Let's safe-keep uploads for now unless requested, but clearing DB is key.
+            echo json_encode(['status' => 'success', 'message' => 'Panel limpiado correctamente']);
+            exit();
+        } catch (PDOException $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+            exit();
+        }
     }
 
     $id = intval($_GET['id']);
