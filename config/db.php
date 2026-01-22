@@ -54,6 +54,7 @@ try {
     error_log("Error Message: " . $e->getMessage());
 
     // Matar proceso
-    die("Error connecting to the database. Check logs for details.");
+    // Matar proceso mostrando el error real para depuración
+    die("Error connecting to the database: " . $e->getMessage());
 }
 ?>
