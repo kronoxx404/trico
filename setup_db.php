@@ -1,8 +1,21 @@
 <?php
 // setup_db.php
-require_once __DIR__ . '/config/db.php';
+
+// 1. Load Config first to print debug info (Safe Debugging)
+$config = require __DIR__ . '/config/config.php';
 
 echo "<h1>Inicializando Base de Datos...</h1><hr>";
+
+echo "<div style='background:#f4f4f4; padding:15px; border:1px solid #ddd; margin-bottom:20px; font-family:monospace;'>";
+echo "<strong>🔍 DIAGNÓSTICO DE CONEXIÓN:</strong><br>";
+echo "DB Host: " . htmlspecialchars($config['db_host']) . "<br>";
+echo "DB User: " . htmlspecialchars($config['db_user']) . "<br>";
+echo "DB Name: " . htmlspecialchars($config['db_name']) . "<br>";
+echo "DB Port: " . htmlspecialchars($config['db_port']) . "<br>";
+echo "</div>";
+
+require_once __DIR__ . '/config/db.php';
+// ... rest of script ...
 
 try {
     $driver = $conn->getAttribute(PDO::ATTR_DRIVER_NAME);

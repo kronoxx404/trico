@@ -32,23 +32,12 @@ if ($driver === 'pgsql') {
     $dsn = "mysql:host=$host;port=$port;dbname=$db_name;charset=utf8mb4";
 }
 
-// Debugging ONLY for setup_db.php
-if (basename($_SERVER['PHP_SELF']) == 'setup_db.php') {
-    echo "<div style='background:#eee; padding:10px; border:1px solid #ccc; margin-bottom:10px;'>";
-    echo "<strong>🔍 Debug Info:</strong><br>";
-    echo "Host: " . htmlspecialchars($host) . "<br>";
-    echo "User: " . htmlspecialchars($user) . "<br>";
-    echo "DB Name: " . htmlspecialchars($db_name) . "<br>";
-    echo "Port: " . htmlspecialchars($port) . "<br>";
-    echo "Driver: " . htmlspecialchars($driver) . "<br>";
-    echo "</div>";
-}
-
 try {
     $conn = new PDO($dsn, $user, $pass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES => false,
+        PDO::ATTR_TIMEOUT => 10, // Fail fast (10 seconds)
     ]);
     // Para compatibilidad con código que espera $pdo
     $pdo = $conn;
