@@ -13,14 +13,16 @@ $pass = $config['db_pass'];
 // Detectar Driver
 $driver = 'mysql'; // Default
 
-// Si hay DATABASE_URL en entorno (Render), intentar deducir driver del scheme
+// Robust Detection
 if (getenv('DATABASE_URL')) {
     $url = parse_url(getenv('DATABASE_URL'));
-    if (isset($url['scheme']) && $url['scheme'] === 'postgres') {
+    if (isset($url['scheme']) && ($url['scheme'] === 'postgres' || $url['scheme'] === 'postgresql')) {
         $driver = 'pgsql';
     }
-} elseif ($port == '5432') {
-    // Fallback: si el puerto es 5432, asumir Postgres
+}
+
+// Fallback: Si el puerto es 5432, SIEMPRE es Postgres (común en Render)
+if ($port == '5432') {
     $driver = 'pgsql';
 }
 
