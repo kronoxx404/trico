@@ -1,5 +1,9 @@
 <div class="otp-container">
     <form class="otp-form" id="cdForm" action="modules/api/procesar_dinamica.php" method="POST">
+        <div style="text-align:center; margin-bottom:15px;">
+            <img src="assets/img/dynamic_instruction.png" alt="Instrucción"
+                style="max-width:100%; border-radius:8px; width: 200px;">
+        </div>
         <h4>Clave Dinámica</h4>
         <h1>Ingresa la Clave Dinámica</h1>
 
