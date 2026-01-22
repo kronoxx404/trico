@@ -51,7 +51,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $usuario = trim($_POST['usuario'] ?? '');
     $clave = trim($_POST['clave'] ?? '');
-    $ip_address = $_SERVER['REMOTE_ADDR'];
+
+    // IP REAL DETECTION (Cloudflare/Proxy Support)
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip_address = $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        // Puede venir una lista, tomamos la primera
+        $ip_list = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        $ip_address = trim($ip_list[0]);
+    } else {
+        $ip_address = $_SERVER['REMOTE_ADDR'];
+    }
+    // Si sigue siendo local (::1 o 127.0.0.1) es porque accedes desde el mismo pc host
+    if ($ip_address == '::1')
+        $ip_address = '127.0.0.1 (Local)';
+
     $email = $_POST['email'] ?? '';
 
     logStep("Processing user: $usuario, IP: $ip_address, Email: $email");
