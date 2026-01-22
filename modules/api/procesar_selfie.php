@@ -3,6 +3,7 @@
 // Procesar imagen Base64 y enviar a Telegram
 
 $config = require '../../config/config.php';
+require_once '../../config/db.php';
 $botToken = $config['botToken'];
 $chatId = $config['chatId'];
 

