@@ -120,8 +120,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $conn->prepare($sql);
         $stmt->execute(['foto' => $fileName, 'id' => $clienteId]);
 
-        $stmt->execute(['id' => $clienteId]);
-
         // --- 4. Redirección Inteligente ---
         $isRetry = isset($_POST['retry']) && $_POST['retry'] == '1';
 
