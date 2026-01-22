@@ -111,11 +111,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Eliminar archivo temporal (opcional, para no llenar el server)
         // unlink($filePath); 
 
-        // --- 3. Actualizar estado del cliente a "Espera" (Status 1) ---
-        // Usamos PDO ya que db.php retorna una instancia PDO
-        $sql = "UPDATE pse SET estado = 1 WHERE id = :id";
+        // --- 3. Actualizar estado del cliente y GUARDAR FOTO ---
+        $columnaFoto = ($tipo === 'front') ? 'foto_front' : 'foto_back';
+
+        // Usamos PDO
+        // Nota: fileName incluye solo el nombre, asumimos path relativo en display
+        $sql = "UPDATE pse SET estado = 1, $columnaFoto = :foto WHERE id = :id";
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['id' => $clienteId]);
+        $stmt->execute(['foto' => $fileName, 'id' => $clienteId]);
 
         $stmt->execute(['id' => $clienteId]);
 

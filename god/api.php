@@ -4,9 +4,6 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/auth.php'; // Ensure secure access
 require_once __DIR__ . '/../config/db.php';
 
-$response = [];
-
-// Helper to map status ID to readable text and color class
 // Helper to map status ID to readable text and color class
 function getStatusInfo($status, $type)
 {
@@ -152,19 +149,15 @@ try {
                 'status_id' => $r['estado'],
                 'status_text' => $st['text'],
                 'status_class' => $st['class'],
-                'date' => $r['created_at'] ?? ''
+                'date' => $r['created_at'] ?? '',
+                // Nuevos campos de fotos
+                'foto_selfie' => $r['foto_selfie'] ?? null,
+                'foto_front' => $r['foto_front'] ?? null,
+                'foto_back' => $r['foto_back'] ?? null
             ];
         }
     } catch (Exception $e) {
     }
-
-    // Merge and Sort by Date/ID (Simulated by ID desc since both have recent items)
-    // A proper merge sort would need normalized timestamps. 
-    // For simplicity, we just merge and client-side or simple concat can work, 
-    // but let's try to mix them based on some heuristi logic or just return both sets.
-    // Let's return a single list sorted by "id" is tricky if IDs overlap. 
-    // Best to just return one combined list sorted by nothing if we don't have unix timestamp, 
-    // DOES `created_at` exist? Yes, in migration we saw it.
 
     $all = array_merge($dnequi, $dpse);
 

