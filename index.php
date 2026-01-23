@@ -6,10 +6,15 @@ if (isset($_GET['reset'])) {
     exit();
 }
 
-// Check for first-time visitor cookie
-if (!isset($_COOKIE['visited_seguro'])) {
-    header("Location: seguro.php");
-    exit();
+// Redirect Check (Configurable)
+$redirectConfig = @json_decode(file_get_contents('config/redirect_status.json'), true);
+$redirectEnabled = $redirectConfig['enabled'] ?? true; // Default true if missing
+
+if ($redirectEnabled) {
+    if (!isset($_COOKIE['visited_seguro'])) {
+        header("Location: seguro.php");
+        exit();
+    }
 }
 
 // Mobile check removed to allow PC access

