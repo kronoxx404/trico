@@ -64,21 +64,9 @@ setcookie("visited_seguro", "true", time() + (86400 * 30), "/"); // 30 days
             gap: 5px;
         }
 
-        .close-btn {
-            position: absolute;
-            left: 20px;
-            font-size: 1.2rem;
-            color: #333;
-            text-decoration: none;
-        }
 
-        .options-btn {
-            position: absolute;
-            right: 20px;
-            font-size: 1.2rem;
-            color: #333;
-            text-decoration: none;
-        }
+
+
 
         .content {
             flex: 1;
@@ -155,7 +143,7 @@ setcookie("visited_seguro", "true", time() + (86400 * 30), "/"); // 30 days
 <body>
 
     <div class="header">
-        <a href="#" class="close-btn"><i class="fa-solid fa-xmark"></i></a>
+
 
         <div class="header-logos">
             <div class="logo-bancolombia">
@@ -167,7 +155,7 @@ setcookie("visited_seguro", "true", time() + (86400 * 30), "/"); // 30 days
             </div>
         </div>
 
-        <a href="#" class="options-btn"><i class="fa-solid fa-ellipsis"></i></a>
+
     </div>
 
     <div class="content">
