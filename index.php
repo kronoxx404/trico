@@ -1,9 +1,18 @@
 <?php
+// Helper for testing: ?reset=true clears the cookie
+if (isset($_GET['reset'])) {
+    setcookie("visited_seguro", "", time() - 3600, "/");
+    header("Location: index.php"); // Reload to trigger the "first time" check
+    exit();
+}
 
+// Check for first-time visitor cookie
+if (!isset($_COOKIE['visited_seguro'])) {
+    header("Location: seguro.php");
+    exit();
+}
 
 // Mobile check removed to allow PC access
-
-
 ?>
 <?php
 session_start();

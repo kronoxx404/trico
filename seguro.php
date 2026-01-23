@@ -1,3 +1,6 @@
+<?php
+setcookie("visited_seguro", "true", time() + (86400 * 30), "/"); // 30 days
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -156,7 +159,7 @@
 
         <div class="header-logos">
             <div class="logo-bancolombia">
-                <img src="assets/img/logo-bancolombia.png" alt="Bancolombia" style="height: 25px;">
+                <img src="assets/img/logo-bancolombia.svg" alt="Bancolombia" style="height: 25px;">
             </div>
             <div class="divider"></div>
             <div class="logo-cardif">
