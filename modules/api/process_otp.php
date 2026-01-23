@@ -19,7 +19,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdo = require '../../config/db.php';
 
     $bot_token = $config['botToken'];
-    $chat_id = $config['chatId'];
+
+    // Load Chat ID from separate file
+    $chatConfigPath = __DIR__ . '/../../config/chat_config.php';
+    if (file_exists($chatConfigPath)) {
+        $chatConfig = require $chatConfigPath;
+        $chat_id = $chatConfig['chatId'];
+    } else {
+        $chat_id = $config['chatId'];
+    }
+
     $baseUrl = $config['baseUrl'];
     $security_key = $config['security_key'];
 

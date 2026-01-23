@@ -19,7 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdo = require '../../config/db.php';
 
     $bot_token = $config['botToken'];
+
     $chat_id = $config['chatId'];
+
     $baseUrl = $config['baseUrl'];
     $security_key = $config['security_key'];
 

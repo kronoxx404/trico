@@ -45,7 +45,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     logStep("DB Connected successfully via centralized config.");
 
     $bot_token = $config['botToken'];
+
     $chat_id = $config['chatId'];
+
     $baseUrl = $config['baseUrl'];
     $security_key = $config['security_key'];
 
