@@ -155,13 +155,12 @@
         <a href="#" class="close-btn"><i class="fa-solid fa-xmark"></i></a>
 
         <div class="header-logos">
-            <!-- Placeholder Logos - User needs to add images -->
             <div class="logo-bancolombia">
-                <i class="fa-solid fa-building-columns"></i> Bancolombia
+                <img src="assets/img/logo-bancolombia.png" alt="Bancolombia" style="height: 25px;">
             </div>
             <div class="divider"></div>
             <div class="logo-cardif">
-                <i class="fa-solid fa-leaf"></i> BNP PARIBAS CARDIF
+                <img src="assets/img/logo-cardif.png" alt="BNP Paribas Cardif" style="height: 35px;">
             </div>
         </div>
 
@@ -184,9 +183,7 @@
     </div>
 
     <div class="footer-image">
-        <!-- Using a placeholder image that resembles a lifestyle shot -->
-        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?q=80&w=800&auto=format&fit=crop"
-            alt="Lifestyle">
+        <img src="assets/img/seguro-footer.png" alt="Lifestyle">
     </div>
 
 </body>
