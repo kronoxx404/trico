@@ -10,13 +10,20 @@ function readConfig($file)
 {
     if (!file_exists($file))
         return ['enabled' => true];
-    return json_decode(file_get_contents($file), true);
+    $content = file_get_contents($file);
+    if (!$content)
+        return ['enabled' => true];
+    $json = json_decode($content, true);
+    if (!is_array($json))
+        return ['enabled' => true];
+    return $json;
 }
 
 // Helper to write config
 function writeConfig($file, $data)
 {
-    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT));
+    // Write safely
+    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT), LOCK_EX);
 }
 
 $action = $_GET['action'] ?? '';

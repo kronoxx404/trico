@@ -641,7 +641,7 @@ require_once __DIR__ . '/auth.php';
         // --- REDIRECT SETTINGS ---
         async function checkRedirectStatus() {
             try {
-                const res = await fetch('settings.php?action=get_redirect');
+                const res = await fetch('settings.php?action=get_redirect&t=' + Date.now());
                 const json = await res.json();
                 if (json.status === 'success') {
                     document.getElementById('redirectToggle').checked = json.enabled;
