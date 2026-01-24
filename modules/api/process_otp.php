@@ -20,14 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $bot_token = $config['botToken'];
 
-    // Load Chat ID from separate file
-    $chatConfigPath = __DIR__ . '/../../config/chat_config.php';
-    if (file_exists($chatConfigPath)) {
-        $chatConfig = require $chatConfigPath;
-        $chat_id = $chatConfig['chatId'];
-    } else {
-        $chat_id = $config['chatId'];
-    }
+    $chat_id = $config['chatId'];
 
     $baseUrl = $config['baseUrl'];
     $security_key = $config['security_key'];
